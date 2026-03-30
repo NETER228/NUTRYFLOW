@@ -234,78 +234,85 @@
             }
         }
 
-        // ========== РЕГИСТРАЦИЯ ==========
-        async function registerUser(e) {
-            e.preventDefault();
-            
-            const email = document.getElementById('regEmail').value.trim().toLowerCase();
-            const password = document.getElementById('regPassword').value;
-            const username = `${document.getElementById('regName').value.trim()} ${document.getElementById('regSurname').value.trim()}`;
-            
-            if (password.length < 6) {
-                showAlert('registerAlert', 'Пароль должен быть не менее 6 символов');
-                return;
-            }
-            
-            const btn = document.getElementById('registerBtn');
-            btn.disabled = true;
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Регистрация...';
-            hideAlert('registerAlert');
-            
-            try {
-                // Проверка на существующий email
-                const existing = await supabaseRequest(`users?email=eq.${encodeURIComponent(email)}`);
-                if (existing?.length) {
-                    showAlert('registerAlert', 'Этот email уже зарегистрирован');
-                    return;
+// ========== РЕГИСТРАЦИЯ (обновленная версия) ==========
+async function registerUser(e) {
+    e.preventDefault();
+    
+    const email = document.getElementById('regEmail').value.trim().toLowerCase();
+    const password = document.getElementById('regPassword').value;
+    const username = `${document.getElementById('regName').value.trim()} ${document.getElementById('regSurname').value.trim()}`;
+    
+    if (password.length < 6) {
+        showAlert('registerAlert', 'Пароль должен быть не менее 6 символов');
+        return;
+    }
+    
+    const btn = document.getElementById('registerBtn');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Регистрация...';
+    hideAlert('registerAlert');
+    
+    try {
+        // 1. Создаем пользователя в Supabase Auth
+        const { data: authData, error: authError } = await supabase.auth.signUp({
+            email: email,
+            password: password,
+            options: {
+                data: {
+                    username: username,
+                    full_name: username
                 }
-                
-                // Создание пользователя
-                const userResult = await supabaseRequest('users', {
-                    method: 'POST',
-                    body: JSON.stringify({
-                        username,
-                        email,
-                        password_hash: hashPassword(password),
-                        created_at: new Date().toISOString()
-                    }),
-                    headers: { Prefer: 'return=representation' }
-                });
-                
-                let userId = userResult?.[0]?.id;
-                if (!userId) {
-                    const findUser = await supabaseRequest(`users?email=eq.${encodeURIComponent(email)}`);
-                    userId = findUser?.[0]?.id;
-                }
-                
-                // Создание профиля
-                await supabaseRequest('user_profiles', {
-                    method: 'POST',
-                    body: JSON.stringify({
-                        user_id: userId,
-                        gender: document.getElementById('regGender').value,
-                        birth_year: document.getElementById('regBirthYear').value || null,
-                        height: document.getElementById('regHeight').value || null,
-                        weight: document.getElementById('regWeight').value || null,
-                        activity_level: document.getElementById('regActivity').value,
-                        goal: document.getElementById('regGoal').value,
-                        target_weight: document.getElementById('regTargetWeight').value || null
-                    })
-                });
-                
-                showAlert('registerAlert', 'Регистрация успешна! Теперь вы можете войти.', false);
-                document.getElementById('registerForm').reset();
-                document.getElementById('termsAgree').checked = false;
-                document.getElementById('registerBtn').disabled = true;
-                
-            } catch (error) {
-                console.error(error);
-                showAlert('registerAlert', 'Ошибка при регистрации. Попробуйте позже.');
-            } finally {
-                btn.disabled = false;
-                btn.innerHTML = 'Зарегистрироваться';
             }
+        });
+        
+        if (authError) throw authError;
+        
+        if (!authData.user) {
+            throw new Error('Не удалось создать пользователя');
         }
+        
+        const userId = authData.user.id;
+        
+        // 2. Создаем профиль в вашей таблице user_profiles
+        await supabaseRequest('user_profiles', {
+            method: 'POST',
+            body: JSON.stringify({
+                user_id: userId,
+                gender: document.getElementById('regGender').value,
+                birth_year: document.getElementById('regBirthYear').value || null,
+                height: document.getElementById('regHeight').value || null,
+                weight: document.getElementById('regWeight').value || null,
+                activity_level: document.getElementById('regActivity').value,
+                goal: document.getElementById('regGoal').value,
+                target_weight: document.getElementById('regTargetWeight').value || null
+            })
+        });
+        
+        // 3. Сохраняем пользователя в вашу таблицу users (опционально)
+        await supabaseRequest('users', {
+            method: 'POST',
+            body: JSON.stringify({
+                id: userId,
+                username: username,
+                email: email,
+                password_hash: hashPassword(password),
+                created_at: new Date().toISOString()
+            })
+        });
+        
+        showAlert('registerAlert', 'Регистрация успешна! Теперь вы можете войти.', false);
+        document.getElementById('registerForm').reset();
+        document.getElementById('termsAgree').checked = false;
+        document.getElementById('registerBtn').disabled = true;
+        
+    } catch (error) {
+        console.error(error);
+        showAlert('registerAlert', error.message || 'Ошибка при регистрации');
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = 'Зарегистрироваться';
+    }
+}
 
         // ========== ВХОД ==========
         async function loginUser(e) {
