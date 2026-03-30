@@ -28,9 +28,6 @@
                 <label><i class="fas fa-lock"></i> Пароль</label>
                 <input type="password" id="loginPassword" placeholder="··········" required>
                 <button type="submit" class="btn" id="loginBtn">Войти</button>
-                <div class="forgot-password">
-                    <a href="forgot-password.html" class="forgot-link">Забыли пароль?</a>
-                </div>
             </form>
         </div>
         
@@ -104,16 +101,27 @@
                 <p><strong>Настоящее Соглашение</strong> определяет условия использования сайта NutriFlow.</p>
                 
                 <h3><i class="fas fa-info-circle"></i> 1. Информационный характер</h3>
-                <p>Вся информация на Сайте носит информационный характер и <strong>не является медицинской консультацией</strong>.</p>
+                <p>Вся информация на Сайте (расчеты калорий, рекомендации по питанию, программы тренировок, марафоны, спортивные добавки) носит исключительно информационный характер и <strong>не является медицинской консультацией</strong>.</p>
                 
                 <h3><i class="fas fa-pills"></i> 2. Спортивное питание и добавки</h3>
-                <p><strong>Администрация Сайта НЕ НЕСЕТ ОТВЕТСТВЕННОСТИ</strong> за любые последствия приема спортивных добавок.</p>
+                <p><strong>Администрация Сайта НЕ НЕСЕТ ОТВЕТСТВЕННОСТИ</strong> за любые последствия приема спортивных добавок и БАД. Решение о приеме принимается Пользователем на свой страх и риск. <strong>Рекомендуется консультация врача</strong>.</p>
                 
                 <h3><i class="fas fa-dumbbell"></i> 3. Фитнес-марафоны и тренировки</h3>
-                <p><strong>Администрация Сайта НЕ НЕСЕТ ОТВЕТСТВЕННОСТИ</strong> за травмы, ухудшение состояния здоровья.</p>
+                <p><strong>Администрация Сайта НЕ НЕСЕТ ОТВЕТСТВЕННОСТИ</strong> за травмы, ухудшение состояния здоровья или иные негативные последствия, возникшие в результате выполнения программ тренировок и марафонов. Перед началом любых физических нагрузок <strong>обязательно проконсультируйтесь с врачом</strong>.</p>
                 
                 <h3><i class="fas fa-gavel"></i> 4. Полное освобождение от ответственности</h3>
-                <p><strong>АДМИНИСТРАЦИЯ САЙТА НЕ НЕСЕТ ОТВЕТСТВЕННОСТИ ЗА ЛЮБЫЕ ПОСЛЕДСТВИЯ</strong></p>
+                <p><strong>АДМИНИСТРАЦИЯ САЙТА НЕ НЕСЕТ ОТВЕТСТВЕННОСТИ ЗА ЛЮБЫЕ ПОСЛЕДСТВИЯ, СВЯЗАННЫЕ С ИСПОЛЬЗОВАНИЕМ САЙТА, ВКЛЮЧАЯ ВРЕД ЗДОРОВЬЮ, УЩЕРБ ИМУЩЕСТВУ, УПУЩЕННУЮ ВЫГОДУ.</strong></p>
+                
+                <div class="info-note" style="background: #f0f4fa; padding: 1rem; border-radius: 12px; margin: 1rem 0;">
+                    <i class="fas fa-check-circle" style="color: #2a7de1;"></i>
+                    <p style="margin: 0; display: inline-block; margin-left: 0.5rem;"><strong>Регистрация на Сайте</strong> означает полное и безоговорочное принятие настоящего Соглашения.</p>
+                </div>
+                
+                <h3><i class="fas fa-calendar-alt"></i> Дата обновления</h3>
+                <p>30 марта 2026 г.</p>
+                
+                <h3><i class="fas fa-envelope"></i> Контакты для вопросов</h3>
+                <p>support@nutriflow.ru</p>
             </div>
             <div class="modal-footer">
                 <button class="btn close-modal-btn" id="declineTermsBtn">Отказаться</button>
@@ -122,238 +130,237 @@
         </div>
     </div>
 
- <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script>
-    // ========== ИНИЦИАЛИЗАЦИЯ SUPABASE (ОДИН РАЗ) ==========
-    const SUPABASE_URL = 'https://bowbokskvpwlpkggswao.supabase.co';
-    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJvd2Jva3NrdnB3bHBrZ2dzd2FvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM2ODcyODUsImV4cCI6MjA4OTI2MzI4NX0.s3GrEoE84ECDdH6wlX7ECfh2itVfL4w4o8DdqL4LFoA';
-    
-    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    <script>
+        const SUPABASE_URL = 'https://bowbokskvpwlpkggswao.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJvd2Jva3NrdnB3bHBrZ2dzd2FvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM2ODcyODUsImV4cCI6MjA4OTI2MzI4NX0.s3GrEoE84ECDdH6wlX7ECfh2itVfL4w4o8DdqL4LFoA';
 
-    // Вспомогательные функции
-    function hashPassword(password) {
-        let hash = 0;
-        for (let i = 0; i < password.length; i++) {
-            hash = ((hash << 5) - hash) + password.charCodeAt(i);
-            hash = hash & hash;
+        // Вспомогательные функции
+        function hashPassword(password) {
+            let hash = 0;
+            for (let i = 0; i < password.length; i++) {
+                hash = ((hash << 5) - hash) + password.charCodeAt(i);
+                hash = hash & hash;
+            }
+            return hash.toString();
         }
-        return hash.toString();
-    }
 
-    async function supabaseRequest(endpoint, options = {}) {
-        const url = `${SUPABASE_URL}/rest/v1/${endpoint}`;
-        const headers = {
-            'apikey': SUPABASE_KEY,
-            'Authorization': `Bearer ${SUPABASE_KEY}`,
-            'Content-Type': 'application/json',
-            ...options.headers
-        };
-        const response = await fetch(url, { ...options, headers });
-        const text = await response.text();
-        return text ? JSON.parse(text) : null;
-    }
+        async function supabaseRequest(endpoint, options = {}) {
+            const url = `${SUPABASE_URL}/rest/v1/${endpoint}`;
+            const headers = {
+                'apikey': SUPABASE_KEY,
+                'Authorization': `Bearer ${SUPABASE_KEY}`,
+                'Content-Type': 'application/json',
+                ...options.headers
+            };
+            const response = await fetch(url, { ...options, headers });
+            const text = await response.text();
+            return text ? JSON.parse(text) : null;
+        }
 
-    function showAlert(elementId, message, isError = true) {
-        const alert = document.getElementById(elementId);
-        alert.innerHTML = `<i class="fas fa-${isError ? 'exclamation-triangle' : 'check-circle'}"></i> ${message}`;
-        alert.style.display = 'block';
-        alert.style.backgroundColor = isError ? '#f8d7da' : '#d4edda';
-        alert.style.color = isError ? '#721c24' : '#155724';
-        setTimeout(() => {
-            alert.style.display = 'none';
-        }, 5000);
-    }
+        function showAlert(elementId, message, isError = true) {
+            const alert = document.getElementById(elementId);
+            alert.innerHTML = `<i class="fas fa-${isError ? 'exclamation-triangle' : 'check-circle'}"></i> ${message}`;
+            alert.style.display = 'block';
+            alert.style.backgroundColor = isError ? '#f8d7da' : '#d4edda';
+            alert.style.color = isError ? '#721c24' : '#155724';
+            setTimeout(() => {
+                alert.style.display = 'none';
+            }, 5000);
+        }
 
-    function hideAlert(elementId) {
-        const alert = document.getElementById(elementId);
-        if (alert) alert.style.display = 'none';
-    }
+        function hideAlert(elementId) {
+            const alert = document.getElementById(elementId);
+            if (alert) alert.style.display = 'none';
+        }
 
-    // ========== МОДАЛЬНОЕ ОКНО ==========
-    function setupTermsModal() {
-        const modal = document.getElementById('termsModal');
-        const termsLink = document.getElementById('termsLink');
-        const closeBtns = document.querySelectorAll('.close-modal');
-        const acceptBtn = document.getElementById('acceptTermsBtn');
-        const declineBtn = document.getElementById('declineTermsBtn');
-        const termsCheckbox = document.getElementById('termsAgree');
-        const registerBtn = document.getElementById('registerBtn');
+        // ========== МОДАЛЬНОЕ ОКНО ==========
+        function setupTermsModal() {
+            const modal = document.getElementById('termsModal');
+            const termsLink = document.getElementById('termsLink');
+            const closeBtns = document.querySelectorAll('.close-modal');
+            const acceptBtn = document.getElementById('acceptTermsBtn');
+            const declineBtn = document.getElementById('declineTermsBtn');
+            const termsCheckbox = document.getElementById('termsAgree');
+            const registerBtn = document.getElementById('registerBtn');
 
-        if (termsLink) {
-            termsLink.addEventListener('click', (e) => {
-                e.preventDefault();
-                modal.classList.add('show');
+            // Открытие модального окна
+            if (termsLink) {
+                termsLink.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    modal.classList.add('show');
+                });
+            }
+
+            // Закрытие крестиком
+            closeBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    modal.classList.remove('show');
+                });
             });
-        }
 
-        closeBtns.forEach(btn => {
-            btn.addEventListener('click', () => modal.classList.remove('show'));
-        });
+            // Принять условия
+            if (acceptBtn) {
+                acceptBtn.addEventListener('click', function() {
+                    termsCheckbox.checked = true;
+                    registerBtn.disabled = false;
+                    modal.classList.remove('show');
+                });
+            }
 
-        if (acceptBtn) {
-            acceptBtn.addEventListener('click', () => {
-                termsCheckbox.checked = true;
-                registerBtn.disabled = false;
-                modal.classList.remove('show');
-            });
-        }
+            // Отказаться
+            if (declineBtn) {
+                declineBtn.addEventListener('click', function() {
+                    termsCheckbox.checked = false;
+                    registerBtn.disabled = true;
+                    modal.classList.remove('show');
+                });
+            }
 
-        if (declineBtn) {
-            declineBtn.addEventListener('click', () => {
-                termsCheckbox.checked = false;
-                registerBtn.disabled = true;
-                modal.classList.remove('show');
-            });
-        }
-
-        window.addEventListener('click', (e) => {
-            if (e.target === modal) modal.classList.remove('show');
-        });
-
-        if (termsCheckbox) {
-            termsCheckbox.addEventListener('change', () => {
-                registerBtn.disabled = !termsCheckbox.checked;
-            });
-        }
-    }
-
-    // ========== РЕГИСТРАЦИЯ ==========
-    async function registerUser(e) {
-        e.preventDefault();
-        
-        const email = document.getElementById('regEmail').value.trim().toLowerCase();
-        const password = document.getElementById('regPassword').value;
-        const username = `${document.getElementById('regName').value.trim()} ${document.getElementById('regSurname').value.trim()}`;
-        
-        if (password.length < 6) {
-            showAlert('registerAlert', 'Пароль должен быть не менее 6 символов');
-            return;
-        }
-        
-        const btn = document.getElementById('registerBtn');
-        btn.disabled = true;
-        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Регистрация...';
-        hideAlert('registerAlert');
-        
-        try {
-            // 1. Создаем пользователя в Supabase Auth
-            const { data: authData, error: authError } = await supabaseClient.auth.signUp({
-                email: email,
-                password: password,
-                options: {
-                    data: {
-                        username: username,
-                        full_name: username
-                    }
+            // Закрытие при клике вне окна
+            window.addEventListener('click', function(e) {
+                if (e.target === modal) {
+                    modal.classList.remove('show');
                 }
             });
+
+            // Чекбокс
+            if (termsCheckbox) {
+                termsCheckbox.addEventListener('change', function() {
+                    registerBtn.disabled = !this.checked;
+                });
+            }
+        }
+
+        // ========== РЕГИСТРАЦИЯ ==========
+        async function registerUser(e) {
+            e.preventDefault();
             
-            if (authError) throw authError;
+            const email = document.getElementById('regEmail').value.trim().toLowerCase();
+            const password = document.getElementById('regPassword').value;
+            const username = `${document.getElementById('regName').value.trim()} ${document.getElementById('regSurname').value.trim()}`;
             
-            if (!authData.user) {
-                throw new Error('Не удалось создать пользователя');
+            if (password.length < 6) {
+                showAlert('registerAlert', 'Пароль должен быть не менее 6 символов');
+                return;
             }
             
-            const userId = authData.user.id;
+            const btn = document.getElementById('registerBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Регистрация...';
+            hideAlert('registerAlert');
             
-            // 2. Создаем профиль в таблице user_profiles
-            await supabaseRequest('user_profiles', {
-                method: 'POST',
-                body: JSON.stringify({
-                    user_id: userId,
-                    gender: document.getElementById('regGender').value,
-                    birth_year: document.getElementById('regBirthYear').value || null,
-                    height: document.getElementById('regHeight').value || null,
-                    weight: document.getElementById('regWeight').value || null,
-                    activity_level: document.getElementById('regActivity').value,
-                    goal: document.getElementById('regGoal').value,
-                    target_weight: document.getElementById('regTargetWeight').value || null
-                })
-            });
-            
-            // 3. Создаем запись в таблице users
-            await supabaseRequest('users', {
-                method: 'POST',
-                body: JSON.stringify({
-                    id: userId,
-                    username: username,
-                    email: email,
-                    password_hash: hashPassword(password),
-                    created_at: new Date().toISOString()
-                })
-            });
-            
-            showAlert('registerAlert', 'Регистрация успешна! Теперь вы можете войти.', false);
-            document.getElementById('registerForm').reset();
-            document.getElementById('termsAgree').checked = false;
-            document.getElementById('registerBtn').disabled = true;
-            
-        } catch (error) {
-            console.error(error);
-            showAlert('registerAlert', error.message || 'Ошибка при регистрации');
-        } finally {
-            btn.disabled = false;
-            btn.innerHTML = 'Зарегистрироваться';
+            try {
+                // Проверка на существующий email
+                const existing = await supabaseRequest(`users?email=eq.${encodeURIComponent(email)}`);
+                if (existing?.length) {
+                    showAlert('registerAlert', 'Этот email уже зарегистрирован');
+                    return;
+                }
+                
+                // Создание пользователя
+                const userResult = await supabaseRequest('users', {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        username,
+                        email,
+                        password_hash: hashPassword(password),
+                        created_at: new Date().toISOString()
+                    }),
+                    headers: { Prefer: 'return=representation' }
+                });
+                
+                let userId = userResult?.[0]?.id;
+                if (!userId) {
+                    const findUser = await supabaseRequest(`users?email=eq.${encodeURIComponent(email)}`);
+                    userId = findUser?.[0]?.id;
+                }
+                
+                // Создание профиля
+                await supabaseRequest('user_profiles', {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        user_id: userId,
+                        gender: document.getElementById('regGender').value,
+                        birth_year: document.getElementById('regBirthYear').value || null,
+                        height: document.getElementById('regHeight').value || null,
+                        weight: document.getElementById('regWeight').value || null,
+                        activity_level: document.getElementById('regActivity').value,
+                        goal: document.getElementById('regGoal').value,
+                        target_weight: document.getElementById('regTargetWeight').value || null
+                    })
+                });
+                
+                showAlert('registerAlert', 'Регистрация успешна! Теперь вы можете войти.', false);
+                document.getElementById('registerForm').reset();
+                document.getElementById('termsAgree').checked = false;
+                document.getElementById('registerBtn').disabled = true;
+                
+            } catch (error) {
+                console.error(error);
+                showAlert('registerAlert', 'Ошибка при регистрации. Попробуйте позже.');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = 'Зарегистрироваться';
+            }
         }
-    }
 
-    // ========== ВХОД ==========
-    async function loginUser(e) {
-        e.preventDefault();
-        
-        const email = document.getElementById('loginEmail').value.trim().toLowerCase();
-        const password = document.getElementById('loginPassword').value;
-        
-        const btn = document.getElementById('loginBtn');
-        btn.disabled = true;
-        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Вход...';
-        hideAlert('loginAlert');
-        
-        try {
-            // Вход через Supabase Auth
-            const { data: authData, error: authError } = await supabaseClient.auth.signInWithPassword({
-                email: email,
-                password: password
-            });
+        // ========== ВХОД ==========
+        async function loginUser(e) {
+            e.preventDefault();
             
-            if (authError) throw authError;
+            const email = document.getElementById('loginEmail').value.trim().toLowerCase();
+            const password = document.getElementById('loginPassword').value;
             
-            // Получаем профиль из таблицы user_profiles
-            const profiles = await supabaseRequest(`user_profiles?user_id=eq.${authData.user.id}`);
+            const btn = document.getElementById('loginBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Вход...';
+            hideAlert('loginAlert');
             
-            const userData = {
-                id: authData.user.id,
-                username: authData.user.user_metadata?.username || email,
-                email: email,
-                profile: profiles?.[0] || null
-            };
-            
-            sessionStorage.setItem('currentUser', JSON.stringify(userData));
-            
-            showAlert('loginAlert', 'Вход выполнен! Перенаправление...', false);
-            setTimeout(() => {
-                window.location.href = 'index-auth.html';
-            }, 1000);
-            
-        } catch (error) {
-            console.error(error);
-            showAlert('loginAlert', error.message || 'Ошибка при входе');
-        } finally {
-            btn.disabled = false;
-            btn.innerHTML = 'Войти';
+            try {
+                const users = await supabaseRequest(`users?email=eq.${encodeURIComponent(email)}`);
+                if (!users?.length) {
+                    showAlert('loginAlert', 'Пользователь не найден');
+                    return;
+                }
+                
+                const user = users[0];
+                if (user.password_hash !== hashPassword(password)) {
+                    showAlert('loginAlert', 'Неверный пароль');
+                    return;
+                }
+                
+                const profiles = await supabaseRequest(`user_profiles?user_id=eq.${user.id}`);
+                sessionStorage.setItem('currentUser', JSON.stringify({
+                    id: user.id,
+                    username: user.username,
+                    email: user.email,
+                    profile: profiles?.[0] || null
+                }));
+                
+                showAlert('loginAlert', 'Вход выполнен! Перенаправление...', false);
+                setTimeout(() => {
+                    window.location.href = 'index-auth.html';
+                }, 1000);
+                
+            } catch (error) {
+                console.error(error);
+                showAlert('loginAlert', 'Ошибка при входе');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = 'Войти';
+            }
         }
-    }
 
-    // ========== ИНИЦИАЛИЗАЦИЯ ==========
-    document.addEventListener('DOMContentLoaded', () => {
-        setupTermsModal();
-        
-        const registerForm = document.getElementById('registerForm');
-        const loginForm = document.getElementById('loginForm');
-        
-        if (registerForm) registerForm.addEventListener('submit', registerUser);
-        if (loginForm) loginForm.addEventListener('submit', loginUser);
-    });
-</script>
+        // ========== ИНИЦИАЛИЗАЦИЯ ==========
+        document.addEventListener('DOMContentLoaded', function() {
+            setupTermsModal();
+            
+            const registerForm = document.getElementById('registerForm');
+            const loginForm = document.getElementById('loginForm');
+            
+            if (registerForm) registerForm.addEventListener('submit', registerUser);
+            if (loginForm) loginForm.addEventListener('submit', loginUser);
+        });
+    </script>
 </body>
 </html>
