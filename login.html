@@ -10,29 +10,34 @@
 <body>
     <header>
         <div class="logo">
-        <img src="https://bowbokskvpwlpkggswao.supabase.co/storage/v1/object/public/image/LOGO2.png" alt="NutriFlow">
-    </div>
+            <img src="https://bowbokskvpwlpkggswao.supabase.co/storage/v1/object/public/image/LOGO2.png" alt="NutriFlow">
+        </div>
         <nav>
             <button class="btn btn-outline" onclick="location.href='index.html'"><i class="fas fa-home"></i> Главная</button>
         </nav>
     </header>
 
     <div class="auth-container">
+        <!-- Форма входа -->
         <div class="login">
             <h2><i class="fas fa-sign-in-alt"></i> Вход</h2>
-            <div class="alert" id="loginAlert"></div>
+            <div class="alert" id="loginAlert" style="display: none;"></div>
             <form id="loginForm">
                 <label><i class="fas fa-envelope"></i> Почта</label>
                 <input type="email" id="loginEmail" placeholder="example@mail.com" required>
                 <label><i class="fas fa-lock"></i> Пароль</label>
                 <input type="password" id="loginPassword" placeholder="··········" required>
                 <button type="submit" class="btn" id="loginBtn">Войти</button>
+<div class="forgot-password">
+    <a href="forgot-password.html" class="forgot-link">Забыли пароль?</a>
+</div>
             </form>
         </div>
-
+        
+        <!-- Форма регистрации -->
         <div class="register">
             <h2><i class="fas fa-user-plus"></i> Регистрация</h2>
-            <div class="alert" id="registerAlert"></div>
+            <div class="alert" id="registerAlert" style="display: none;"></div>
             <form id="registerForm">
                 <label><i class="fas fa-envelope"></i> Почта</label>
                 <input type="email" id="regEmail" placeholder="example@mail.com" required>
@@ -62,11 +67,11 @@
                 
                 <h3><i class="fas fa-running"></i> Уровень активности</h3>
                 <select id="regActivity">
-                    <option value="1.2">Минимальный</option>
-                    <option value="1.375">Легкий</option>
-                    <option value="1.55">Средний</option>
-                    <option value="1.725">Высокий</option>
-                    <option value="1.9">Марафонец</option>
+                    <option value="1.2">Минимальный (сидячий образ жизни)</option>
+                    <option value="1.375">Легкий (1-3 дня в неделю)</option>
+                    <option value="1.55">Средний (3-5 дней в неделю)</option>
+                    <option value="1.725">Высокий (6-7 дней в неделю)</option>
+                    <option value="1.9">Марафонец (ежедневно)</option>
                 </select>
                 
                 <h3><i class="fas fa-bullseye"></i> Ваша цель</h3>
@@ -78,8 +83,53 @@
                 
                 <input type="number" id="regTargetWeight" placeholder="Желаемый вес (кг)">
                 
-                <button type="submit" class="btn" id="registerBtn">Зарегистрироваться</button>
+                <div class="terms-checkbox">
+                    <input type="checkbox" id="termsAgree" required>
+                    <label for="termsAgree">Я принимаю условия <a href="#" id="termsLink">Пользовательского соглашения</a></label>
+                </div>
+                
+                <button type="submit" class="btn" id="registerBtn" disabled>Зарегистрироваться</button>
             </form>
+        </div>
+    </div>
+
+    <!-- Модальное окно для пользовательского соглашения -->
+    <div id="termsModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-file-contract"></i> Пользовательское соглашение</h2>
+                <span class="close-modal">&times;</span>
+            </div>
+            <div class="modal-body">
+                <p><strong>Настоящее Соглашение</strong> определяет условия использования сайта NutriFlow.</p>
+                
+                <h3><i class="fas fa-info-circle"></i> 1. Информационный характер</h3>
+                <p>Вся информация на Сайте (расчеты калорий, рекомендации по питанию, программы тренировок, марафоны, спортивные добавки) носит исключительно информационный характер и <strong>не является медицинской консультацией</strong>.</p>
+                
+                <h3><i class="fas fa-pills"></i> 2. Спортивное питание и добавки</h3>
+                <p><strong>Администрация Сайта НЕ НЕСЕТ ОТВЕТСТВЕННОСТИ</strong> за любые последствия приема спортивных добавок и БАД. Решение о приеме принимается Пользователем на свой страх и риск. <strong>Рекомендуется консультация врача</strong>.</p>
+                
+                <h3><i class="fas fa-dumbbell"></i> 3. Фитнес-марафоны и тренировки</h3>
+                <p><strong>Администрация Сайта НЕ НЕСЕТ ОТВЕТСТВЕННОСТИ</strong> за травмы, ухудшение состояния здоровья или иные негативные последствия, возникшие в результате выполнения программ тренировок и марафонов. Перед началом любых физических нагрузок <strong>обязательно проконсультируйтесь с врачом</strong>.</p>
+                
+                <h3><i class="fas fa-gavel"></i> 4. Полное освобождение от ответственности</h3>
+                <p><strong>АДМИНИСТРАЦИЯ САЙТА НЕ НЕСЕТ ОТВЕТСТВЕННОСТИ ЗА ЛЮБЫЕ ПОСЛЕДСТВИЯ, СВЯЗАННЫЕ С ИСПОЛЬЗОВАНИЕМ САЙТА, ВКЛЮЧАЯ ВРЕД ЗДОРОВЬЮ, УЩЕРБ ИМУЩЕСТВУ, УПУЩЕННУЮ ВЫГОДУ.</strong></p>
+                
+                <div class="info-note" style="background: #f0f4fa; padding: 1rem; border-radius: 12px; margin: 1rem 0;">
+                    <i class="fas fa-check-circle" style="color: #2a7de1;"></i>
+                    <p style="margin: 0; display: inline-block; margin-left: 0.5rem;"><strong>Регистрация на Сайте</strong> означает полное и безоговорочное принятие настоящего Соглашения.</p>
+                </div>
+                
+                <h3><i class="fas fa-calendar-alt"></i> Дата обновления</h3>
+                <p>30 марта 2026 г.</p>
+                
+                <h3><i class="fas fa-envelope"></i> Контакты для вопросов</h3>
+                <p>support@nutriflow.ru</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn close-modal-btn" id="declineTermsBtn">Отказаться</button>
+                <button class="btn btn-primary" id="acceptTermsBtn"><i class="fas fa-check-circle"></i> Принимаю условия</button>
+            </div>
         </div>
     </div>
 
@@ -87,6 +137,7 @@
         const SUPABASE_URL = 'https://bowbokskvpwlpkggswao.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJvd2Jva3NrdnB3bHBrZ2dzd2FvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM2ODcyODUsImV4cCI6MjA4OTI2MzI4NX0.s3GrEoE84ECDdH6wlX7ECfh2itVfL4w4o8DdqL4LFoA';
 
+        // Вспомогательные функции
         function hashPassword(password) {
             let hash = 0;
             for (let i = 0; i < password.length; i++) {
@@ -115,6 +166,9 @@
             alert.style.display = 'block';
             alert.style.backgroundColor = isError ? '#f8d7da' : '#d4edda';
             alert.style.color = isError ? '#721c24' : '#155724';
+            setTimeout(() => {
+                alert.style.display = 'none';
+            }, 5000);
         }
 
         function hideAlert(elementId) {
@@ -122,13 +176,76 @@
             if (alert) alert.style.display = 'none';
         }
 
-        // Регистрация
-        document.getElementById('registerForm').addEventListener('submit', async (e) => {
+        // ========== МОДАЛЬНОЕ ОКНО ==========
+        function setupTermsModal() {
+            const modal = document.getElementById('termsModal');
+            const termsLink = document.getElementById('termsLink');
+            const closeBtns = document.querySelectorAll('.close-modal');
+            const acceptBtn = document.getElementById('acceptTermsBtn');
+            const declineBtn = document.getElementById('declineTermsBtn');
+            const termsCheckbox = document.getElementById('termsAgree');
+            const registerBtn = document.getElementById('registerBtn');
+
+            // Открытие модального окна
+            if (termsLink) {
+                termsLink.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    modal.classList.add('show');
+                });
+            }
+
+            // Закрытие крестиком
+            closeBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    modal.classList.remove('show');
+                });
+            });
+
+            // Принять условия
+            if (acceptBtn) {
+                acceptBtn.addEventListener('click', function() {
+                    termsCheckbox.checked = true;
+                    registerBtn.disabled = false;
+                    modal.classList.remove('show');
+                });
+            }
+
+            // Отказаться
+            if (declineBtn) {
+                declineBtn.addEventListener('click', function() {
+                    termsCheckbox.checked = false;
+                    registerBtn.disabled = true;
+                    modal.classList.remove('show');
+                });
+            }
+
+            // Закрытие при клике вне окна
+            window.addEventListener('click', function(e) {
+                if (e.target === modal) {
+                    modal.classList.remove('show');
+                }
+            });
+
+            // Чекбокс
+            if (termsCheckbox) {
+                termsCheckbox.addEventListener('change', function() {
+                    registerBtn.disabled = !this.checked;
+                });
+            }
+        }
+
+        // ========== РЕГИСТРАЦИЯ ==========
+        async function registerUser(e) {
             e.preventDefault();
             
             const email = document.getElementById('regEmail').value.trim().toLowerCase();
             const password = document.getElementById('regPassword').value;
             const username = `${document.getElementById('regName').value.trim()} ${document.getElementById('regSurname').value.trim()}`;
+            
+            if (password.length < 6) {
+                showAlert('registerAlert', 'Пароль должен быть не менее 6 символов');
+                return;
+            }
             
             const btn = document.getElementById('registerBtn');
             btn.disabled = true;
@@ -136,16 +253,21 @@
             hideAlert('registerAlert');
             
             try {
+                // Проверка на существующий email
                 const existing = await supabaseRequest(`users?email=eq.${encodeURIComponent(email)}`);
                 if (existing?.length) {
                     showAlert('registerAlert', 'Этот email уже зарегистрирован');
                     return;
                 }
                 
+                // Создание пользователя
                 const userResult = await supabaseRequest('users', {
                     method: 'POST',
                     body: JSON.stringify({
-                        username, email, password_hash: hashPassword(password), created_at: new Date().toISOString()
+                        username,
+                        email,
+                        password_hash: hashPassword(password),
+                        created_at: new Date().toISOString()
                     }),
                     headers: { Prefer: 'return=representation' }
                 });
@@ -155,8 +277,8 @@
                     const findUser = await supabaseRequest(`users?email=eq.${encodeURIComponent(email)}`);
                     userId = findUser?.[0]?.id;
                 }
-                if (!userId) throw new Error('Не удалось создать пользователя');
                 
+                // Создание профиля
                 await supabaseRequest('user_profiles', {
                     method: 'POST',
                     body: JSON.stringify({
@@ -171,20 +293,22 @@
                     })
                 });
                 
-                showAlert('registerAlert', 'Регистрация успешна! Теперь можно войти.', false);
+                showAlert('registerAlert', 'Регистрация успешна! Теперь вы можете войти.', false);
                 document.getElementById('registerForm').reset();
+                document.getElementById('termsAgree').checked = false;
+                document.getElementById('registerBtn').disabled = true;
                 
             } catch (error) {
                 console.error(error);
-                showAlert('registerAlert', 'Ошибка при регистрации');
+                showAlert('registerAlert', 'Ошибка при регистрации. Попробуйте позже.');
             } finally {
                 btn.disabled = false;
                 btn.innerHTML = 'Зарегистрироваться';
             }
-        });
+        }
 
-        // Вход
-        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+        // ========== ВХОД ==========
+        async function loginUser(e) {
             e.preventDefault();
             
             const email = document.getElementById('loginEmail').value.trim().toLowerCase();
@@ -210,11 +334,16 @@
                 
                 const profiles = await supabaseRequest(`user_profiles?user_id=eq.${user.id}`);
                 sessionStorage.setItem('currentUser', JSON.stringify({
-                    id: user.id, username: user.username, email: user.email, profile: profiles?.[0] || null
+                    id: user.id,
+                    username: user.username,
+                    email: user.email,
+                    profile: profiles?.[0] || null
                 }));
                 
                 showAlert('loginAlert', 'Вход выполнен! Перенаправление...', false);
-                setTimeout(() => window.location.href = 'index-auth.html', 1000);
+                setTimeout(() => {
+                    window.location.href = 'index-auth.html';
+                }, 1000);
                 
             } catch (error) {
                 console.error(error);
@@ -223,9 +352,18 @@
                 btn.disabled = false;
                 btn.innerHTML = 'Войти';
             }
+        }
+
+        // ========== ИНИЦИАЛИЗАЦИЯ ==========
+        document.addEventListener('DOMContentLoaded', function() {
+            setupTermsModal();
+            
+            const registerForm = document.getElementById('registerForm');
+            const loginForm = document.getElementById('loginForm');
+            
+            if (registerForm) registerForm.addEventListener('submit', registerUser);
+            if (loginForm) loginForm.addEventListener('submit', loginUser);
         });
     </script>
-    <script src="load-footer.js"></script>
-
 </body>
 </html>
