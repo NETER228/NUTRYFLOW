@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>NutriFlow - Вход</title>
+    <link rel="icon" type="image/png" href="https://bowbokskvpwlpkggswao.supabase.co/storage/v1/object/public/image/favico.png">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <header>
+        <div class="logo">
+        <img src="https://bowbokskvpwlpkggswao.supabase.co/storage/v1/object/public/image/LOGO2.png" alt="NutriFlow">
+    </div>
+        <nav>
+            <button class="btn btn-outline" onclick="location.href='index.html'"><i class="fas fa-home"></i> Главная</button>
+        </nav>
+    </header>
+
+    <div class="auth-container">
+        <div class="login">
+            <h2><i class="fas fa-sign-in-alt"></i> Вход</h2>
+            <div class="alert" id="loginAlert"></div>
+            <form id="loginForm">
+                <label><i class="fas fa-envelope"></i> Почта</label>
+                <input type="email" id="loginEmail" placeholder="example@mail.com" required>
+                <label><i class="fas fa-lock"></i> Пароль</label>
+                <input type="password" id="loginPassword" placeholder="··········" required>
+                <button type="submit" class="btn" id="loginBtn">Войти</button>
+            </form>
+        </div>
+
+        <div class="register">
+            <h2><i class="fas fa-user-plus"></i> Регистрация</h2>
+            <div class="alert" id="registerAlert"></div>
+            <form id="registerForm">
+                <label><i class="fas fa-envelope"></i> Почта</label>
+                <input type="email" id="regEmail" placeholder="example@mail.com" required>
+                
+                <label><i class="fas fa-lock"></i> Пароль</label>
+                <input type="password" id="regPassword" placeholder="Минимум 6 символов" required>
+                
+                <div class="name-row">
+                    <input type="text" id="regName" placeholder="Имя" required>
+                    <input type="text" id="regSurname" placeholder="Фамилия" required>
+                </div>
+
+                <h3><i class="fas fa-chart-line"></i> Ваши параметры</h3>
+                
+                <div class="form-row-inline">
+                    <select id="regGender">
+                        <option value="male">Мужчина</option>
+                        <option value="female">Женщина</option>
+                    </select>
+                    <input type="number" id="regBirthYear" placeholder="Год рождения">
+                </div>
+                
+                <div class="form-row-inline">
+                    <input type="number" id="regHeight" placeholder="Рост (см)">
+                    <input type="number" id="regWeight" placeholder="Вес (кг)">
+                </div>
+                
+                <h3><i class="fas fa-running"></i> Уровень активности</h3>
+                <select id="regActivity">
+                    <option value="1.2">Минимальный</option>
+                    <option value="1.375">Легкий</option>
+                    <option value="1.55">Средний</option>
+                    <option value="1.725">Высокий</option>
+                    <option value="1.9">Марафонец</option>
+                </select>
+                
+                <h3><i class="fas fa-bullseye"></i> Ваша цель</h3>
+                <select id="regGoal">
+                    <option value="maintain">Поддержание веса</option>
+                    <option value="lose">Похудение</option>
+                    <option value="gain">Набор массы</option>
+                </select>
+                
+                <input type="number" id="regTargetWeight" placeholder="Желаемый вес (кг)">
+                
+                <button type="submit" class="btn" id="registerBtn">Зарегистрироваться</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const SUPABASE_URL = 'https://bowbokskvpwlpkggswao.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJvd2Jva3NrdnB3bHBrZ2dzd2FvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM2ODcyODUsImV4cCI6MjA4OTI2MzI4NX0.s3GrEoE84ECDdH6wlX7ECfh2itVfL4w4o8DdqL4LFoA';
+
+        function hashPassword(password) {
+            let hash = 0;
+            for (let i = 0; i < password.length; i++) {
+                hash = ((hash << 5) - hash) + password.charCodeAt(i);
+                hash = hash & hash;
+            }
+            return hash.toString();
+        }
+
+        async function supabaseRequest(endpoint, options = {}) {
+            const url = `${SUPABASE_URL}/rest/v1/${endpoint}`;
+            const headers = {
+                'apikey': SUPABASE_KEY,
+                'Authorization': `Bearer ${SUPABASE_KEY}`,
+                'Content-Type': 'application/json',
+                ...options.headers
+            };
+            const response = await fetch(url, { ...options, headers });
+            const text = await response.text();
+            return text ? JSON.parse(text) : null;
+        }
+
+        function showAlert(elementId, message, isError = true) {
+            const alert = document.getElementById(elementId);
+            alert.innerHTML = `<i class="fas fa-${isError ? 'exclamation-triangle' : 'check-circle'}"></i> ${message}`;
+            alert.style.display = 'block';
+            alert.style.backgroundColor = isError ? '#f8d7da' : '#d4edda';
+            alert.style.color = isError ? '#721c24' : '#155724';
+        }
+
+        function hideAlert(elementId) {
+            const alert = document.getElementById(elementId);
+            if (alert) alert.style.display = 'none';
+        }
+
+        // Регистрация
+        document.getElementById('registerForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const email = document.getElementById('regEmail').value.trim().toLowerCase();
+            const password = document.getElementById('regPassword').value;
+            const username = `${document.getElementById('regName').value.trim()} ${document.getElementById('regSurname').value.trim()}`;
+            
+            const btn = document.getElementById('registerBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Регистрация...';
+            hideAlert('registerAlert');
+            
+            try {
+                const existing = await supabaseRequest(`users?email=eq.${encodeURIComponent(email)}`);
+                if (existing?.length) {
+                    showAlert('registerAlert', 'Этот email уже зарегистрирован');
+                    return;
+                }
+                
+                const userResult = await supabaseRequest('users', {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        username, email, password_hash: hashPassword(password), created_at: new Date().toISOString()
+                    }),
+                    headers: { Prefer: 'return=representation' }
+                });
+                
+                let userId = userResult?.[0]?.id;
+                if (!userId) {
+                    const findUser = await supabaseRequest(`users?email=eq.${encodeURIComponent(email)}`);
+                    userId = findUser?.[0]?.id;
+                }
+                if (!userId) throw new Error('Не удалось создать пользователя');
+                
+                await supabaseRequest('user_profiles', {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        user_id: userId,
+                        gender: document.getElementById('regGender').value,
+                        birth_year: document.getElementById('regBirthYear').value || null,
+                        height: document.getElementById('regHeight').value || null,
+                        weight: document.getElementById('regWeight').value || null,
+                        activity_level: document.getElementById('regActivity').value,
+                        goal: document.getElementById('regGoal').value,
+                        target_weight: document.getElementById('regTargetWeight').value || null
+                    })
+                });
+                
+                showAlert('registerAlert', 'Регистрация успешна! Теперь можно войти.', false);
+                document.getElementById('registerForm').reset();
+                
+            } catch (error) {
+                console.error(error);
+                showAlert('registerAlert', 'Ошибка при регистрации');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = 'Зарегистрироваться';
+            }
+        });
+
+        // Вход
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const email = document.getElementById('loginEmail').value.trim().toLowerCase();
+            const password = document.getElementById('loginPassword').value;
+            
+            const btn = document.getElementById('loginBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Вход...';
+            hideAlert('loginAlert');
+            
+            try {
+                const users = await supabaseRequest(`users?email=eq.${encodeURIComponent(email)}`);
+                if (!users?.length) {
+                    showAlert('loginAlert', 'Пользователь не найден');
+                    return;
+                }
+                
+                const user = users[0];
+                if (user.password_hash !== hashPassword(password)) {
+                    showAlert('loginAlert', 'Неверный пароль');
+                    return;
+                }
+                
+                const profiles = await supabaseRequest(`user_profiles?user_id=eq.${user.id}`);
+                sessionStorage.setItem('currentUser', JSON.stringify({
+                    id: user.id, username: user.username, email: user.email, profile: profiles?.[0] || null
+                }));
+                
+                showAlert('loginAlert', 'Вход выполнен! Перенаправление...', false);
+                setTimeout(() => window.location.href = 'index-auth.html', 1000);
+                
+            } catch (error) {
+                console.error(error);
+                showAlert('loginAlert', 'Ошибка при входе');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = 'Войти';
+            }
+        });
+    </script>
+    <script src="load-footer.js"></script>
+
+</body>
+</html>

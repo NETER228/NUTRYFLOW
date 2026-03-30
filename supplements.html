@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>NutriFlow - Добавки</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" type="image/png" href="https://bowbokskvpwlpkggswao.supabase.co/storage/v1/object/public/image/favico.png">
+</head>
+<body>
+
+<div id="header-placeholder"></div>
+
+<main style="max-width: 1200px; margin: 60px auto; padding: 0 20px;">
+    <h1 style="text-align: center; margin-bottom: 20px;">Спортивное питание</h1>
+    <p style="text-align: center; color: #666; margin-bottom: 40px;">Выберите категорию добавок</p>
+    
+    <div class="supplements-categories">
+        <div class="category-card" data-category="protein">
+            <div class="category-icon"><i class="fas fa-dumbbell"></i></div>
+            <h3>Протеин</h3>
+            <p>Сывороточный, казеин, изолят</p>
+        </div>
+        <div class="category-card" data-category="creatine">
+            <div class="category-icon"><i class="fas fa-bolt"></i></div>
+            <h3>Креатин</h3>
+            <p>Моногидрат, микронизированный</p>
+        </div>
+        <div class="category-card" data-category="preworkout">
+            <div class="category-icon"><i class="fas fa-fire"></i></div>
+            <h3>Предтреники</h3>
+            <p>Энергия, фокус, пампинг</p>
+        </div>
+        <div class="category-card" data-category="amino">
+            <div class="category-icon"><i class="fas fa-dna"></i></div>
+            <h3>Аминокислоты</h3>
+            <p>BCAA, EAA, восстановление</p>
+        </div>
+        <div class="category-card" data-category="electrolytes">
+            <div class="category-icon"><i class="fas fa-tint"></i></div>
+            <h3>Электролиты</h3>
+            <p>Гидратация, изотоники</p>
+        </div>
+        <div class="category-card" data-category="fatburners">
+            <div class="category-icon"><i class="fas fa-running"></i></div>
+            <h3>Жиросжигатели</h3>
+            <p>L-карнитин, термогеники</p>
+        </div>
+    </div>
+
+   <div class="supplements-descriptions">
+    <div class="description-item">
+        <div class="description-icon"><i class="fas fa-dumbbell"></i></div>
+        <div class="description-content">
+            <h3>Протеин</h3>
+            <p>Белок — это основа ваших мышц, тканей и ферментов. Протеин помогает восстанавливаться после тренировок, предотвращает разрушение мышечных волокон и способствует набору чистой мышечной массы. Регулярный прием протеина обеспечивает организм строительным материалом для роста и восстановления.</p>
+            <div class="description-details">
+                <span class="detail-badge"><i class="fas fa-clock"></i> Когда принимать: после тренировки, утром, между приемами пищи</span>
+                <span class="detail-badge"><i class="fas fa-weight-scale"></i> Рекомендуемая доза: 1.5-2 г на кг веса в день</span>
+                <span class="detail-badge"><i class="fas fa-flask"></i> Виды: сывороточный, казеин, изолят, гидролизат</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="description-item">
+        <div class="description-icon"><i class="fas fa-bolt"></i></div>
+        <div class="description-content">
+            <h3>Креатин</h3>
+            <p>Креатин — одна из самых изученных и эффективных спортивных добавок. Он увеличивает запасы АТФ в мышцах, что позволяет выполнять больше повторений, повышает взрывную силу и ускоряет восстановление между подходами. Особенно эффективен при высокоинтенсивных нагрузках и в силовых видах спорта.</p>
+            <div class="description-details">
+                <span class="detail-badge"><i class="fas fa-clock"></i> Когда принимать: до или после тренировки, в дни отдыха — утром</span>
+                <span class="detail-badge"><i class="fas fa-weight-scale"></i> Рекомендуемая доза: 3-5 г в день</span>
+                <span class="detail-badge"><i class="fas fa-flask"></i> Виды: моногидрат, микронизированный, гидрохлорид</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="description-item">
+        <div class="description-icon"><i class="fas fa-fire"></i></div>
+        <div class="description-content">
+            <h3>Предтренировочный комплекс</h3>
+            <p>Предтреник — это мощный комплекс для максимальной отдачи на тренировке. Он повышает энергию, улучшает концентрацию и фокус, усиливает пампинг и отодвигает чувство усталости. Содержит кофеин, бета-аланин, аргинин и другие активные компоненты для достижения пиковой производительности.</p>
+            <div class="description-details">
+                <span class="detail-badge"><i class="fas fa-clock"></i> Когда принимать: за 20-30 минут до тренировки</span>
+                <span class="detail-badge"><i class="fas fa-weight-scale"></i> Рекомендуемая доза: согласно инструкции (обычно 1 порция)</span>
+                <span class="detail-badge"><i class="fas fa-flask"></i> Состав: кофеин, бета-аланин, цитруллин, аргинин</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="description-item">
+        <div class="description-icon"><i class="fas fa-dna"></i></div>
+        <div class="description-content">
+            <h3>BCAA (разветвленные аминокислоты)</h3>
+            <p>BCAA — это три незаменимые аминокислоты: лейцин, изолейцин и валин. Они составляют около 35% мышечной ткани и играют ключевую роль в синтезе белка. BCAA защищают мышцы от разрушения во время интенсивных тренировок, ускоряют восстановление, снижают усталость и помогают сохранить мышечную массу при сушке.</p>
+            <div class="description-details">
+                <span class="detail-badge"><i class="fas fa-clock"></i> Когда принимать: до, во время или после тренировки</span>
+                <span class="detail-badge"><i class="fas fa-weight-scale"></i> Рекомендуемая доза: 5-10 г до или после тренировки</span>
+                <span class="detail-badge"><i class="fas fa-flask"></i> Соотношение: 2:1:1 или 4:1:1 (лейцин:изолейцин:валин)</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="description-item">
+        <div class="description-icon"><i class="fas fa-leaf"></i></div>
+        <div class="description-content">
+            <h3>EAA (незаменимые аминокислоты)</h3>
+            <p>EAA — это комплекс из 9 незаменимых аминокислот, которые организм не может синтезировать самостоятельно и должен получать с пищей или добавками. В отличие от BCAA, EAA включают полный спектр аминокислот, необходимых для полноценного восстановления, роста мышц, поддержания иммунитета и гормонального баланса.</p>
+            <div class="description-details">
+                <span class="detail-badge"><i class="fas fa-clock"></i> Когда принимать: утром, во время тренировки, после тренировки</span>
+                <span class="detail-badge"><i class="fas fa-weight-scale"></i> Рекомендуемая доза: 10-15 г в день</span>
+                <span class="detail-badge"><i class="fas fa-flask"></i> Состав: гистидин, изолейцин, лейцин, лизин, метионин, фенилаланин, треонин, триптофан, валин</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="description-item">
+        <div class="description-icon"><i class="fas fa-tint"></i></div>
+        <div class="description-content">
+            <h3>Электролиты</h3>
+            <p>Электролиты — это минеральные вещества (натрий, калий, магний, кальций), которые поддерживают водно-солевой баланс, проводят нервные импульсы и обеспечивают нормальное сокращение мышц. Во время интенсивных тренировок с потом теряется большое количество электролитов, что может привести к судорогам, усталости и снижению производительности.</p>
+            <div class="description-details">
+                <span class="detail-badge"><i class="fas fa-clock"></i> Когда принимать: до, во время и после тренировки</span>
+                <span class="detail-badge"><i class="fas fa-weight-scale"></i> Рекомендуемая доза: по потребности (особенно в жару и при интенсивном потоотделении)</span>
+                <span class="detail-badge"><i class="fas fa-flask"></i> Состав: натрий, калий, магний, кальций, хлориды</span>
+            </div>
+        </div>
+    </div>
+</div>
+</main>
+
+<script>
+    const SUPABASE_URL = 'https://bowbokskvpwlpkggswao.supabase.co';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJvd2Jva3NrdnB3bHBrZ2dzd2FvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM2ODcyODUsImV4cCI6MjA4OTI2MzI4NX0.s3GrEoE84ECDdH6wlX7ECfh2itVfL4w4o8DdqL4LFoA';
+
+    const currentUser = JSON.parse(sessionStorage.getItem('currentUser'));
+    if (!currentUser) window.location.href = 'index.html';
+
+    document.querySelectorAll('.category-card').forEach(card => {
+        card.addEventListener('click', () => {
+            window.location.href = `dashboard.html?category=${card.dataset.category}`;
+        });
+    });
+</script>
+<script src="load-header.js"></script>
+<script src="load-footer.js"></script>
+</body>
+</html>

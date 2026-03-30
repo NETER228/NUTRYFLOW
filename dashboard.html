@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>NutriFlow - Добавки</title>
+    <link rel="stylesheet" href="style.css">
+        <link rel="icon" type="image/png" href="https://bowbokskvpwlpkggswao.supabase.co/storage/v1/object/public/image/favico.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+<div id="header-placeholder"></div>
+
+<main style="max-width: 1200px; margin: 60px auto; padding: 0 20px;">
+    <div style="margin-bottom: 30px;">
+        <a href="supplements.html" class="back-link">← Назад к категориям</a>
+    </div>
+    
+    <h1 id="categoryTitle" style="text-align: center; margin-bottom: 20px;"></h1>
+    <p id="categoryDesc" style="text-align: center; color: #666; margin-bottom: 40px;"></p>
+    
+    <div id="productsGrid" class="products-grid">
+        <div style="text-align: center; padding: 50px;">Загрузка...</div>
+    </div>
+</main>
+
+<script>
+    const SUPABASE_URL = 'https://bowbokskvpwlpkggswao.supabase.co';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJvd2Jva3NrdnB3bHBrZ2dzd2FvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM2ODcyODUsImV4cCI6MjA4OTI2MzI4NX0.s3GrEoE84ECDdH6wlX7ECfh2itVfL4w4o8DdqL4LFoA';
+
+    const currentUser = JSON.parse(sessionStorage.getItem('currentUser'));
+    if (!currentUser) window.location.href = 'index.html';
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const category = urlParams.get('category');
+
+    const categories = {
+        protein: { table: 'supplements_protein', title: 'Протеин', desc: 'Белок для роста мышц.' },
+        creatine: { table: 'supplements_creatine', title: 'Креатин', desc: 'Повышает силу и выносливость.' },
+        preworkout: { table: 'supplements_preworkout', title: 'Предтреники', desc: 'Энергия и концентрация.' },
+        amino: { table: 'supplements_amino', title: 'Аминокислоты', desc: 'BCAA, EAA, восстановление.' },
+        electrolytes: { table: 'supplements_electrolytes', title: 'Электролиты', desc: 'Гидратация.' },
+        fatburners: { table: 'supplements_fatburners', title: 'Жиросжигатели', desc: 'L-карнитин, термогеники.' }
+    };
+
+    if (!category || !categories[category]) {
+        document.getElementById('productsGrid').innerHTML = '<div style="text-align: center; padding: 50px; color: red;">Категория не найдена</div>';
+    } else {
+        const cat = categories[category];
+        document.getElementById('categoryTitle').textContent = cat.title;
+        document.getElementById('categoryDesc').textContent = cat.desc;
+        loadProducts(cat.table);
+    }
+
+    async function loadProducts(tableName) {
+        try {
+            const response = await fetch(`${SUPABASE_URL}/rest/v1/${tableName}?select=*`, {
+                headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}` }
+            });
+            const products = await response.json();
+            
+            const grid = document.getElementById('productsGrid');
+            if (!products.length) {
+                grid.innerHTML = '<div style="text-align: center; padding: 50px;">Товары временно отсутствуют</div>';
+                return;
+            }
+            
+            grid.innerHTML = products.map(product => `
+                <div class="product-card">
+                    <div class="product-image">
+                        <img src="${product.image_url || 'https://via.placeholder.com/200x200?text=No+Image'}" alt="${product.name}">
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-title">${product.name}</h3>
+                        <p class="product-description">${product.description || 'Без описания'}</p>
+                        <div class="product-links">
+                            ${product.ozon_url ? `<a href="${product.ozon_url}" target="_blank" class="ozon-link">Ozon</a>` : ''}
+                            ${product.wildberries_url ? `<a href="${product.wildberries_url}" target="_blank" class="wb-link">Wildberries</a>` : ''}
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        } catch (error) {
+            console.error(error);
+            document.getElementById('productsGrid').innerHTML = '<div style="text-align: center; padding: 50px; color: red;">Ошибка загрузки</div>';
+        }
+    }
+</script>
+<script src="load-header.js"></script>
+<script src="load-footer.js"></script>
+</body>
+</html>

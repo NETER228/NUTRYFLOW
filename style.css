@@ -1,0 +1,2148 @@
+/* ===== RESET & BASE ===== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: linear-gradient(135deg, #f5f7fa 0%, #e9eef5 100%);
+    color: #1a1a2e;
+    line-height: 1.5;
+    min-height: 100vh;
+}
+
+/* ===== HEADER ===== */
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 5%;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    border-bottom: 1px solid rgba(42, 125, 225, 0.1);
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+}
+
+.logo img {
+    height: 45px;
+    width: auto;
+    transition: transform 0.3s ease;
+}
+
+.logo img:hover {
+    transform: scale(1.05);
+}
+
+nav {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+}
+
+nav a {
+    text-decoration: none;
+    color: #4a5568;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+nav a:hover,
+nav a.active {
+    color: #2a7de1;
+}
+
+nav a::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: linear-gradient(135deg, #2a7de1, #6b4eff);
+    transition: width 0.3s ease;
+}
+
+nav a:hover::after,
+nav a.active::after {
+    width: 100%;
+}
+
+/* ===== BUTTONS ===== */
+.btn {
+    background: linear-gradient(135deg, #2a7de1, #1c5eb0);
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 12px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(42, 125, 225, 0.3);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(42, 125, 225, 0.4);
+}
+
+.btn:active {
+    transform: translateY(0);
+}
+
+/* ===== HERO SECTION ===== */
+.hero {
+    text-align: center;
+    padding: 4rem 2rem;
+    max-width: 900px;
+    margin: 2rem auto;
+    background: linear-gradient(135deg, rgba(42, 125, 225, 0.05), rgba(107, 78, 255, 0.05));
+    border-radius: 40px;
+}
+
+.hero h1 {
+    font-size: 3rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, #2a7de1, #6b4eff);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    margin-bottom: 1rem;
+}
+
+.hero p {
+    font-size: 1.2rem;
+    color: #4a5568;
+    max-width: 600px;
+    margin: 1rem auto;
+}
+
+/* ===== CALCULATOR SECTION ===== */
+.calculator,
+.bmi {
+    text-align: center;
+    padding: 2rem;
+    max-width: 800px;
+    margin: 2rem auto;
+    background: white;
+    border-radius: 32px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s ease;
+}
+
+.calculator:hover,
+.bmi:hover {
+    transform: translateY(-5px);
+}
+
+.calculator h2,
+.bmi h2 {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #1a1a2e;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.calculator h2 i,
+.bmi h2 i {
+    color: #2a7de1;
+}
+
+.inputs,
+.goals,
+.bmi-inputs {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+}
+
+input,
+select {
+    padding: 0.75rem 1rem;
+    border-radius: 12px;
+    border: 2px solid #e2e8f0;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    background: white;
+    flex: 1;
+    min-width: 120px;
+}
+
+input:focus,
+select:focus {
+    outline: none;
+    border-color: #2a7de1;
+    box-shadow: 0 0 0 3px rgba(42, 125, 225, 0.1);
+}
+
+.goals button {
+    padding: 0.75rem 1.5rem;
+    border-radius: 40px;
+    border: 2px solid #e2e8f0;
+    background: white;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    flex: 1;
+}
+
+.goals button:hover,
+.goals button.active {
+    background: linear-gradient(135deg, #2a7de1, #6b4eff);
+    border-color: transparent;
+    color: white;
+    transform: translateY(-2px);
+}
+
+.result-box {
+    margin-top: 1.5rem;
+    padding: 1rem;
+    font-size: 1.2rem;
+    background: linear-gradient(135deg, #f8f9fa, #f0f2f5);
+    border-radius: 16px;
+    color: #2a7de1;
+    font-weight: 500;
+}
+
+.result-box strong {
+    font-size: 1.5rem;
+    color: #2a7de1;
+}
+
+/* ===== MODAL WINDOW ===== */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    z-index: 2000;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.modal.show {
+    display: flex;
+    opacity: 1;
+}
+
+.modal-content {
+    background: white;
+    max-width: 700px;
+    width: 90%;
+    max-height: 85vh;
+    border-radius: 32px;
+    overflow: hidden;
+    animation: modalSlideIn 0.3s ease;
+}
+
+@keyframes modalSlideIn {
+    from {
+        transform: translateY(-50px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem;
+    background: linear-gradient(135deg, #2a7de1, #6b4eff);
+    color: white;
+}
+
+.modal-header h2 {
+    margin: 0;
+    font-size: 1.5rem;
+    color: white;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.close-modal {
+    font-size: 2rem;
+    cursor: pointer;
+    transition: transform 0.3s;
+    line-height: 1;
+}
+
+.close-modal:hover {
+    transform: scale(1.1);
+}
+
+.modal-body {
+    padding: 1.5rem;
+    max-height: 60vh;
+    overflow-y: auto;
+}
+
+.modal-body h3 {
+    margin: 1.5rem 0 0.75rem;
+    color: #2a7de1;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.modal-body p {
+    color: #4a5568;
+    line-height: 1.6;
+    margin-bottom: 0.75rem;
+}
+
+.formula-card {
+    background: #f8f9fa;
+    padding: 1rem;
+    border-radius: 16px;
+    margin: 1rem 0;
+    border-left: 4px solid #2a7de1;
+}
+
+.info-list {
+    list-style: none;
+    padding: 0;
+    margin: 0.75rem 0;
+}
+
+.info-list li {
+    padding: 0.5rem 0;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.badge {
+    background: #2a7de1;
+    color: white;
+    padding: 0.2rem 0.6rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    min-width: 45px;
+    text-align: center;
+}
+
+.bmi-info {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+
+.bmi-badge {
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.bmi-badge.under { background: #fff3cd; color: #856404; }
+.bmi-badge.normal { background: #d4edda; color: #155724; }
+.bmi-badge.over { background: #fff3cd; color: #856404; }
+.bmi-badge.obese { background: #f8d7da; color: #721c24; }
+
+.modal-footer {
+    padding: 1rem 1.5rem;
+    border-top: 1px solid #e2e8f0;
+    text-align: right;
+}
+
+/* ===== FOOTER ===== */
+footer {
+    background: linear-gradient(135deg, #1a1a2e, #16213e);
+    color: white;
+    padding: 3rem 2rem 1.5rem;
+    margin-top: 4rem;
+}
+
+.footer-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+}
+
+.footer-section h3 {
+    color: white;
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+}
+
+.footer-section p {
+    color: #a0a0a0;
+    line-height: 1.6;
+    margin-bottom: 0.5rem;
+}
+
+.footer-section a {
+    color: #a0a0a0;
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+.footer-section a:hover {
+    color: #2a7de1;
+}
+
+.footer-bottom {
+    text-align: center;
+    padding-top: 2rem;
+    margin-top: 2rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    color: #666;
+}
+
+/* ===== PROFILE PAGE (сохраняем существующие стили) ===== */
+.profile-main {
+    max-width: 1400px;
+    margin: 2rem auto;
+    padding: 0 2rem;
+}
+
+.profile-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.profile-card {
+    background: white;
+    border-radius: 24px;
+    padding: 1.5rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+}
+
+.profile-card:hover {
+    transform: translateY(-5px);
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #f0f0f0;
+}
+
+.edit-toggle {
+    background: none;
+    border: none;
+    color: #2a7de1;
+    cursor: pointer;
+    font-size: 0.85rem;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    transition: all 0.3s;
+}
+
+.edit-toggle:hover {
+    background: #eef2f7;
+}
+
+.form-group {
+    margin-bottom: 1rem;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.form-group label {
+    display: block;
+    font-size: 0.8rem;
+    color: #666;
+    margin-bottom: 0.25rem;
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    padding: 0.75rem;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    font-size: 0.9rem;
+}
+
+.result-item {
+    text-align: center;
+    padding: 1.5rem;
+    background: linear-gradient(135deg, #f8f9fa, #f0f2f5);
+    border-radius: 20px;
+    margin-bottom: 1rem;
+}
+
+.result-value {
+    font-size: 2.5rem;
+    font-weight: bold;
+    background: linear-gradient(135deg, #2a7de1, #6b4eff);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+.calorie-box {
+    text-align: center;
+    padding: 1.5rem;
+    background: linear-gradient(135deg, #2a7de1, #6b4eff);
+    border-radius: 20px;
+    color: white;
+    margin-bottom: 1.5rem;
+}
+
+.calorie-value {
+    font-size: 2.5rem;
+    font-weight: bold;
+}
+
+.macros-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.macro-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem;
+    border-radius: 16px;
+    transition: transform 0.3s;
+}
+
+.macro-item:hover {
+    transform: translateY(-3px);
+}
+
+.macro-item.protein { background: linear-gradient(135deg, #ff6b6b, #ff4d4d); color: white; }
+.macro-item.carbs { background: linear-gradient(135deg, #4ecdc4, #2cb1a8); color: white; }
+.macro-item.fats { background: linear-gradient(135deg, #ffe66d, #ffd93d); color: #333; }
+
+.macro-value {
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    margin-top: 2rem;
+}
+
+.info-block {
+    background: white;
+    border-radius: 20px;
+    padding: 1.5rem;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+}
+
+.bmi-scale {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+
+.bmi-scale-item {
+    flex: 1;
+    text-align: center;
+    padding: 0.5rem;
+    font-size: 0.7rem;
+    border-radius: 8px;
+    color: white;
+}
+
+.bmi-scale-item.under { background: #856404; }
+.bmi-scale-item.normal { background: #28a745; }
+.bmi-scale-item.over { background: #fd7e14; }
+.bmi-scale-item.obese { background: #dc3545; }
+
+/* ===== SUPPLEMENTS & MARATHONS ===== */
+.supplements-categories,
+.goals-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+}
+
+.category-card,
+.goal-card {
+    background: white;
+    border-radius: 20px;
+    padding: 2rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+}
+
+.category-card:hover,
+.goal-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(42, 125, 225, 0.2);
+}
+
+.category-icon i,
+.goal-icon {
+    font-size: 2.5rem;
+    color: #2a7de1;
+    margin-bottom: 1rem;
+}
+
+/* ===== MARATHON DETAIL PAGE ===== */
+.program-hero {
+    background: linear-gradient(135deg, #2a7de1, #1c5eb0);
+    padding: 3rem 2rem;
+    color: white;
+    text-align: center;
+}
+
+.program-container {
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: white;
+    text-decoration: none;
+    margin-bottom: 1.5rem;
+    opacity: 0.9;
+    transition: opacity 0.3s;
+}
+
+.back-link:hover {
+    opacity: 1;
+}
+
+.program-content {
+    padding: 3rem 2rem;
+    background: #f8f9fa;
+}
+
+.week-block {
+    background: white;
+    border-radius: 24px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+}
+
+.week-block h2 {
+    color: #2a7de1;
+    margin-bottom: 1.5rem;
+}
+
+.day-block {
+    margin-bottom: 1.5rem;
+    padding: 1.5rem;
+    background: #f8f9fa;
+    border-radius: 16px;
+}
+
+.day-block h3 {
+    color: #333;
+    margin-bottom: 0.75rem;
+}
+
+.day-block ul {
+    list-style: none;
+    padding: 0;
+}
+
+.day-block li {
+    padding: 0.5rem 0;
+    padding-left: 1.5rem;
+    position: relative;
+    color: #555;
+}
+
+.day-block li:before {
+    content: "✓";
+    color: #2a7de1;
+    position: absolute;
+    left: 0;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 1024px) {
+    .profile-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .info-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    header {
+        flex-direction: column;
+        gap: 1rem;
+        padding: 1rem;
+    }
+    
+    nav {
+        justify-content: center;
+        gap: 1rem;
+    }
+    
+    .hero h1 {
+        font-size: 2rem;
+    }
+    
+    .hero p {
+        font-size: 1rem;
+    }
+    
+    .calculator,
+    .bmi {
+        margin: 1rem;
+        padding: 1.5rem;
+    }
+    
+    .profile-grid,
+    .info-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+    
+    .macros-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .inputs,
+    .goals,
+    .bmi-inputs {
+        flex-direction: column;
+    }
+    
+    .goals button {
+        width: 100%;
+    }
+    
+    .modal-content {
+        width: 95%;
+    }
+}
+
+/* ===== ANIMATIONS ===== */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.hero,
+.calculator,
+.bmi,
+.card {
+    animation: fadeInUp 0.6s ease-out;
+}
+
+/* ===== SUPPLEMENTS PAGE EXTRA STYLES ===== */
+.supplements-hero {
+    text-align: center;
+    padding: 3rem 2rem;
+    background: linear-gradient(135deg, #2a7de1, #6b4eff);
+    color: white;
+    border-radius: 0 0 40px 40px;
+}
+
+.supplements-hero h1 {
+    color: white;
+    background: none;
+    -webkit-background-clip: unset;
+    background-clip: unset;
+}
+
+.supplements-categories {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+    padding: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.category-card {
+    background: white;
+    border-radius: 24px;
+    padding: 2rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+}
+
+.category-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(42, 125, 225, 0.2);
+}
+
+.category-icon i {
+    font-size: 3rem;
+    color: #2a7de1;
+    margin-bottom: 1rem;
+}
+
+.category-card h3 {
+    font-size: 1.3rem;
+    margin-bottom: 0.5rem;
+    color: #1a1a2e;
+}
+
+.category-card p {
+    color: #666;
+    font-size: 0.9rem;
+}
+
+/* ===== DASHBOARD PAGE (SUPPLEMENTS DETAIL) ===== */
+.dashboard-hero {
+    background: linear-gradient(135deg, #2a7de1, #6b4eff);
+    padding: 2rem;
+    color: white;
+    text-align: center;
+}
+
+.products-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1.5rem;
+    padding: 2rem;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.product-card {
+    background: white;
+    border-radius: 24px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+}
+
+.product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+}
+
+.product-image {
+    height: 220px;
+    overflow: hidden;
+    background: #f5f5f5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.product-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s;
+}
+
+.product-card:hover .product-image img {
+    transform: scale(1.05);
+}
+
+.product-info {
+    padding: 1.5rem;
+}
+
+.product-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+    color: #1a1a2e;
+}
+
+.product-description {
+    font-size: 0.85rem;
+    color: #666;
+    margin-bottom: 1rem;
+    line-height: 1.5;
+}
+
+.product-links {
+    display: flex;
+    gap: 0.75rem;
+}
+
+.ozon-link,
+.wb-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: 10px;
+    text-decoration: none;
+    font-size: 0.8rem;
+    font-weight: 500;
+    transition: all 0.3s;
+}
+
+.ozon-link {
+    background: #005bff;
+    color: white;
+}
+
+.ozon-link:hover {
+    background: #0040b3;
+    transform: translateY(-2px);
+}
+
+.wb-link {
+    background: #9b59b6;
+    color: white;
+}
+
+.wb-link:hover {
+    background: #7d3c98;
+    transform: translateY(-2px);
+}
+
+/* ===== MARATHONS PAGE ===== */
+.marathons-hero {
+    text-align: center;
+    padding: 4rem 2rem;
+    background: linear-gradient(135deg, #2a7de1, #6b4eff);
+    color: white;
+}
+
+.marathons-hero h1 {
+    color: white;
+    background: none;
+    -webkit-background-clip: unset;
+    margin-bottom: 1rem;
+}
+
+.marathons-hero p {
+    font-size: 1.1rem;
+    opacity: 0.9;
+}
+
+.marathons-selector {
+    padding: 3rem 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.goals-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 2rem;
+}
+
+.goal-card-link {
+    text-decoration: none;
+}
+
+.goal-card {
+    background: white;
+    border-radius: 24px;
+    padding: 2rem;
+    text-align: center;
+    transition: all 0.3s ease;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+}
+
+.goal-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(42, 125, 225, 0.2);
+}
+
+.goal-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+.goal-card h3 {
+    font-size: 1.4rem;
+    margin-bottom: 0.75rem;
+    color: #1a1a2e;
+}
+
+.goal-card p {
+    color: #666;
+    line-height: 1.5;
+}
+
+/* ===== MARATHON DETAIL PAGE ===== */
+.program-hero {
+    background: linear-gradient(135deg, #2a7de1, #6b4eff);
+    padding: 3rem 2rem;
+    color: white;
+    text-align: center;
+}
+
+.program-hero h1 {
+    color: white;
+    background: none;
+    margin-bottom: 1rem;
+}
+
+.program-container {
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: white;
+    text-decoration: none;
+    margin-bottom: 1.5rem;
+    opacity: 0.9;
+    transition: opacity 0.3s;
+}
+
+.back-link:hover {
+    opacity: 1;
+}
+
+.program-content {
+    padding: 3rem 2rem;
+    background: #f8f9fa;
+}
+
+.program-info {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+}
+
+.info-card {
+    background: white;
+    border-radius: 20px;
+    padding: 1.5rem;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+}
+
+.info-card h3 {
+    color: #2a7de1;
+    margin-bottom: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.info-card p {
+    color: #555;
+    line-height: 1.6;
+}
+
+.week-block {
+    background: white;
+    border-radius: 24px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+}
+
+.week-block h2 {
+    color: #2a7de1;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 2px solid #e0e0e0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.day-block {
+    margin-bottom: 1.5rem;
+    padding: 1.5rem;
+    background: #f8f9fa;
+    border-radius: 16px;
+}
+
+.day-block h3 {
+    color: #333;
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+}
+
+.rest-note {
+    color: #2a7de1;
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+    font-style: italic;
+}
+
+.day-block ul {
+    list-style: none;
+    padding: 0;
+}
+
+.day-block li {
+    padding: 0.5rem 0;
+    padding-left: 1.75rem;
+    position: relative;
+    color: #555;
+}
+
+.day-block li:before {
+    content: "✓";
+    color: #2a7de1;
+    position: absolute;
+    left: 0;
+    font-weight: bold;
+}
+
+.notes-block {
+    background: #e8f0fe;
+    border-radius: 16px;
+    padding: 1.25rem;
+    margin: 1rem 0;
+}
+
+.notes-block ul {
+    margin: 0;
+    padding-left: 1.25rem;
+}
+
+.notes-block li {
+    padding: 0.25rem 0;
+    color: #2a7de1;
+}
+
+.notes-block li:before {
+    content: "💡";
+    color: #2a7de1;
+    position: absolute;
+    left: -1.25rem;
+}
+
+.extra-block {
+    background: white;
+    border-radius: 24px;
+    padding: 2rem;
+    margin-top: 2rem;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+}
+
+.extra-block h2 {
+    color: #2a7de1;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.extra-block ul {
+    list-style: none;
+    padding: 0;
+}
+
+.extra-block li {
+    padding: 0.75rem 0;
+    border-bottom: 1px solid #e0e0e0;
+    color: #555;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.extra-block li:last-child {
+    border-bottom: none;
+}
+
+.extra-block li i {
+    color: #2a7de1;
+    width: 24px;
+}
+
+/* ===== PROFILE PAGE EXTRA STYLES ===== */
+.profile-main {
+    max-width: 1400px;
+    margin: 2rem auto;
+    padding: 0 2rem;
+}
+
+.profile-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.profile-card {
+    background: white;
+    border-radius: 24px;
+    padding: 1.5rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+}
+
+.profile-card:hover {
+    transform: translateY(-5px);
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #f0f0f0;
+}
+
+.card-header h2 {
+    font-size: 1.3rem;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.edit-toggle {
+    background: none;
+    border: none;
+    color: #2a7de1;
+    cursor: pointer;
+    font-size: 0.85rem;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.edit-toggle:hover {
+    background: #eef2f7;
+}
+
+.form-group {
+    margin-bottom: 1rem;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.form-group label {
+    display: block;
+    font-size: 0.8rem;
+    color: #666;
+    margin-bottom: 0.25rem;
+}
+
+.form-group label i {
+    color: #2a7de1;
+    width: 20px;
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    padding: 0.75rem;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    font-size: 0.9rem;
+    transition: all 0.3s;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    border-color: #2a7de1;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(42, 125, 225, 0.1);
+}
+
+.form-group input:disabled,
+.form-group select:disabled {
+    background: #f8f9fa;
+    color: #333;
+}
+
+.btn-save {
+    width: 100%;
+    margin-top: 1.5rem;
+    background: linear-gradient(135deg, #2a7de1, #1c5eb0);
+    color: white;
+    border: none;
+    padding: 0.75rem;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.btn-save:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(42, 125, 225, 0.4);
+}
+
+/* Results Card */
+.results-card h2,
+.goal-card h2 {
+    font-size: 1.3rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #f0f0f0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.result-item {
+    text-align: center;
+    padding: 1.5rem;
+    background: linear-gradient(135deg, #f8f9fa, #f0f2f5);
+    border-radius: 20px;
+    margin-bottom: 1rem;
+}
+
+.result-label {
+    font-size: 0.85rem;
+    color: #666;
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.result-value {
+    font-size: 2.5rem;
+    font-weight: bold;
+    background: linear-gradient(135deg, #2a7de1, #6b4eff);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+.result-unit {
+    font-size: 0.75rem;
+    color: #999;
+    margin-top: 0.25rem;
+}
+
+.result-status {
+    font-size: 0.9rem;
+    font-weight: 500;
+    margin-top: 0.5rem;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    display: inline-block;
+}
+
+.result-status.under { background: #fff3cd; color: #856404; }
+.result-status.normal { background: #d4edda; color: #155724; }
+.result-status.over { background: #fff3cd; color: #856404; }
+.result-status.obese { background: #f8d7da; color: #721c24; }
+
+/* Calorie Box */
+.calorie-box {
+    text-align: center;
+    padding: 1.5rem;
+    background: linear-gradient(135deg, #2a7de1, #6b4eff);
+    border-radius: 20px;
+    margin-bottom: 1.5rem;
+    color: white;
+}
+
+.calorie-label {
+    font-size: 0.85rem;
+    opacity: 0.9;
+    margin-bottom: 0.5rem;
+}
+
+.calorie-value {
+    font-size: 2.5rem;
+    font-weight: bold;
+}
+
+.calorie-unit {
+    font-size: 0.75rem;
+    opacity: 0.8;
+    margin-top: 0.25rem;
+}
+
+.macros-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+.macros-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.macro-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem;
+    border-radius: 16px;
+    transition: transform 0.3s;
+}
+
+.macro-item:hover {
+    transform: translateY(-3px);
+}
+
+.macro-item.protein { background: linear-gradient(135deg, #ff6b6b, #ff4d4d); color: white; }
+.macro-item.carbs { background: linear-gradient(135deg, #4ecdc4, #2cb1a8); color: white; }
+.macro-item.fats { background: linear-gradient(135deg, #ffe66d, #ffd93d); color: #333; }
+
+.macro-icon {
+    font-size: 1.5rem;
+}
+
+.macro-info {
+    flex: 1;
+}
+
+.macro-name {
+    font-size: 0.7rem;
+    opacity: 0.9;
+}
+
+.macro-value {
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+.chart-container {
+    max-width: 250px;
+    margin: 0 auto;
+}
+
+/* Info Grid */
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    margin-top: 2rem;
+}
+
+.info-block {
+    background: white;
+    border-radius: 20px;
+    padding: 1.5rem;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+}
+
+.info-block h3 {
+    font-size: 1.1rem;
+    margin-bottom: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.info-block p {
+    color: #666;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    margin-bottom: 0.75rem;
+}
+
+.info-block ul {
+    list-style: none;
+    padding: 0;
+}
+
+.info-block li {
+    color: #666;
+    font-size: 0.85rem;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #f0f0f0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.info-block li strong {
+    color: #2a7de1;
+}
+
+.bmi-scale {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+
+.bmi-scale-item {
+    flex: 1;
+    text-align: center;
+    padding: 0.5rem;
+    font-size: 0.7rem;
+    border-radius: 8px;
+    color: white;
+}
+
+.bmi-scale-item.under { background: #856404; }
+.bmi-scale-item.normal { background: #28a745; }
+.bmi-scale-item.over { background: #fd7e14; }
+.bmi-scale-item.obese { background: #dc3545; }
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 1024px) {
+    .profile-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .info-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .program-info {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .profile-grid,
+    .info-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .form-row {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+    }
+    
+    .macros-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .products-grid {
+        grid-template-columns: 1fr;
+        padding: 1rem;
+    }
+    
+    .goals-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .week-block {
+        padding: 1.25rem;
+    }
+    
+    .day-block {
+        padding: 1rem;
+    }
+    
+    .program-hero h1 {
+        font-size: 1.5rem;
+    }
+    
+    .supplements-categories {
+        padding: 1rem;
+    }
+    
+    .category-card {
+        padding: 1.5rem;
+    }
+}
+
+/* ===== AUTH PAGES STYLES ===== */
+.auth-container {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 0 2rem;
+}
+
+.login,
+.register {
+    background: white;
+    padding: 2rem;
+    border-radius: 32px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+}
+
+.login:hover,
+.register:hover {
+    transform: translateY(-5px);
+}
+
+.register {
+    flex: 3;
+}
+
+.login {
+    flex: 2;
+}
+
+.login h2,
+.register h2 {
+    font-size: 1.8rem;
+    text-align: center;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.login label,
+.register label {
+    font-weight: 500;
+    margin: 0.75rem 0 0.25rem;
+    color: #4a5568;
+    display: block;
+}
+
+.login input,
+.register input,
+.register select {
+    width: 100%;
+    margin-bottom: 0.75rem;
+    padding: 0.75rem 1rem;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    font-size: 1rem;
+    transition: all 0.3s;
+}
+
+.login input:focus,
+.register input:focus,
+.register select:focus {
+    outline: none;
+    border-color: #2a7de1;
+    box-shadow: 0 0 0 3px rgba(42, 125, 225, 0.1);
+}
+
+.name-row {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 0.75rem;
+}
+
+.name-row input {
+    flex: 1;
+    margin-bottom: 0;
+}
+
+.form-row-inline {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 0.75rem;
+}
+
+.form-row-inline select,
+.form-row-inline input {
+    flex: 1;
+    margin-bottom: 0;
+}
+
+.register h3 {
+    font-size: 1rem;
+    margin: 1rem 0 0.5rem;
+    color: #2a7de1;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.login .btn,
+.register .btn {
+    width: 100%;
+    margin-top: 1rem;
+    padding: 0.75rem;
+}
+
+@media (max-width: 768px) {
+    .auth-container {
+        flex-direction: column;
+    }
+    
+    .name-row,
+    .form-row-inline {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .login,
+    .register {
+        width: 100%;
+    }
+}
+/* Детали описаний добавок */
+.description-details {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 1rem;
+    padding-top: 0.75rem;
+    border-top: 1px dashed rgba(42, 125, 225, 0.2);
+}
+
+.detail-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.4rem 0.8rem;
+    background: #f0f4fa;
+    border-radius: 30px;
+    font-size: 0.75rem;
+    color: #2c3e50;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.detail-badge i {
+    color: #2a7de1;
+    font-size: 0.7rem;
+}
+
+.detail-badge:hover {
+    background: #e8f0fe;
+    transform: translateY(-2px);
+}
+
+/* Улучшенные карточки описаний */
+.description-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 1.5rem;
+    background: white;
+    padding: 1.8rem;
+    border-radius: 24px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+    border-left: 4px solid #2a7de1;
+}
+
+.description-item:hover {
+    transform: translateX(8px);
+    box-shadow: 0 10px 30px rgba(42, 125, 225, 0.15);
+}
+
+.description-icon {
+    min-width: 60px;
+    text-align: center;
+}
+
+.description-icon i {
+    font-size: 2.5rem;
+    color: #2a7de1;
+    background: linear-gradient(135deg, #2a7de1, #6b4eff);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+.description-content {
+    flex: 1;
+}
+
+.description-content h3 {
+    color: #1a1a2e;
+    font-size: 1.4rem;
+    margin-bottom: 0.75rem;
+    font-weight: 700;
+}
+
+.description-content p {
+    color: #4a5568;
+    line-height: 1.6;
+    margin-bottom: 0.5rem;
+    font-size: 0.95rem;
+}
+
+/* Адаптация для мобильных */
+@media (max-width: 768px) {
+    .description-item {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        padding: 1.5rem;
+    }
+    
+    .description-icon {
+        margin-bottom: 0.75rem;
+    }
+    
+    .description-details {
+        justify-content: center;
+    }
+    
+    .detail-badge {
+        font-size: 0.7rem;
+        padding: 0.3rem 0.6rem;
+    }
+    
+    .description-content h3 {
+        font-size: 1.2rem;
+    }
+}
+/* ===== КАЛЬКУЛЯТОР КАЛОРИЙ - НОВЫЙ ДИЗАЙН ===== */
+.calculator {
+    background: white;
+    border-radius: 32px;
+    padding: 2rem;
+    max-width: 1000px;
+    margin: 2rem auto;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s ease;
+}
+
+.calculator-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.calculator-header h2 {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #1a1a2e;
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.calculator-header h2 i {
+    color: #2a7de1;
+}
+
+.calculator-subtitle {
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.calculator-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.calc-block {
+    background: #f8fafc;
+    border-radius: 20px;
+    padding: 1.5rem;
+    border: 1px solid #eef2f6;
+}
+
+.calc-block h3 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #2a7de1;
+    margin-bottom: 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #e2e8f0;
+}
+
+.calc-block h3 i {
+    font-size: 1rem;
+}
+
+/* Поля ввода */
+.input-group {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1rem;
+}
+
+.input-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.input-field label {
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: #4a5568;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.input-field label i {
+    color: #2a7de1;
+    width: 18px;
+}
+
+.input-field input,
+.input-field select {
+    padding: 0.75rem 1rem;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    font-size: 0.95rem;
+    transition: all 0.3s;
+    background: white;
+}
+
+.input-field input:focus,
+.input-field select:focus {
+    outline: none;
+    border-color: #2a7de1;
+    box-shadow: 0 0 0 3px rgba(42, 125, 225, 0.1);
+}
+
+/* Активность - радиокнопки в виде карточек */
+.activity-options {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 0.75rem;
+}
+
+.activity-option {
+    cursor: pointer;
+}
+
+.activity-option input {
+    display: none;
+}
+
+.activity-option .option-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 1rem;
+    background: white;
+    border: 2px solid #e2e8f0;
+    border-radius: 16px;
+    transition: all 0.3s;
+    text-align: center;
+}
+
+.activity-option .option-content i {
+    font-size: 1.5rem;
+    color: #2a7de1;
+}
+
+.activity-option .option-content strong {
+    font-size: 0.9rem;
+    color: #1a1a2e;
+}
+
+.activity-option .option-content small {
+    font-size: 0.7rem;
+    color: #666;
+}
+
+.activity-option input:checked + .option-content {
+    border-color: #2a7de1;
+    background: linear-gradient(135deg, rgba(42, 125, 225, 0.05), rgba(107, 78, 255, 0.05));
+    box-shadow: 0 4px 12px rgba(42, 125, 225, 0.15);
+    transform: translateY(-2px);
+}
+
+.activity-option:hover .option-content {
+    border-color: #2a7de1;
+    transform: translateY(-2px);
+}
+
+/* Цели - кнопки */
+.goal-options {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+}
+
+.goal-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 1rem;
+    background: white;
+    border: 2px solid #e2e8f0;
+    border-radius: 16px;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-family: inherit;
+}
+
+.goal-btn i {
+    font-size: 1.5rem;
+    color: #2a7de1;
+}
+
+.goal-btn span {
+    font-weight: 600;
+    font-size: 1rem;
+    color: #1a1a2e;
+}
+
+.goal-btn small {
+    font-size: 0.7rem;
+    color: #666;
+}
+
+.goal-btn:hover {
+    border-color: #2a7de1;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(42, 125, 225, 0.1);
+}
+
+.goal-btn.active {
+    border-color: #2a7de1;
+    background: linear-gradient(135deg, rgba(42, 125, 225, 0.05), rgba(107, 78, 255, 0.05));
+    box-shadow: 0 4px 12px rgba(42, 125, 225, 0.15);
+}
+
+.goal-btn.active i {
+    color: #2a7de1;
+}
+
+/* Кнопка расчета */
+.calculator-action {
+    margin-top: 2rem;
+    text-align: center;
+}
+
+.btn-calculate {
+    background: linear-gradient(135deg, #2a7de1, #1c5eb0);
+    color: white;
+    border: none;
+    padding: 1rem 2rem;
+    border-radius: 40px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    box-shadow: 0 4px 15px rgba(42, 125, 225, 0.3);
+}
+
+.btn-calculate:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(42, 125, 225, 0.4);
+}
+
+.btn-calculate:active {
+    transform: translateY(0);
+}
+
+/* Результат */
+.result-box {
+    margin-top: 1.5rem;
+    padding: 1rem;
+    font-size: 1.1rem;
+    background: linear-gradient(135deg, #f8f9fa, #f0f2f5);
+    border-radius: 16px;
+    color: #2a7de1;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+}
+
+.result-box i {
+    font-size: 1.2rem;
+}
+
+.result-box strong {
+    font-size: 1.3rem;
+    color: #2a7de1;
+}
+
+/* Адаптация для мобильных */
+@media (max-width: 768px) {
+    .calculator {
+        padding: 1.5rem;
+        margin: 1rem;
+    }
+    
+    .input-group {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+    }
+    
+    .activity-options {
+        grid-template-columns: 1fr;
+    }
+    
+    .goal-options {
+        grid-template-columns: 1fr;
+    }
+    
+    .goal-btn {
+        flex-direction: row;
+        justify-content: center;
+        gap: 1rem;
+    }
+    
+    .btn-calculate {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .result-box {
+        font-size: 1rem;
+        flex-wrap: wrap;
+        text-align: center;
+    }
+}

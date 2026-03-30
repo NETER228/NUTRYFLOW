@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>NutriFlow - Программа марафона</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" type="image/png" href="https://bowbokskvpwlpkggswao.supabase.co/storage/v1/object/public/image/favico.png">
+</head>
+<body>
+
+<div id="header-placeholder"></div>
+
+<section class="program-hero" id="programHero">
+    <div class="program-container">
+        <a href="marathons.html" class="back-link"><i class="fas fa-arrow-left"></i> Назад к марафонам</a>
+        <h1 id="marathonTitle">Загрузка...</h1>
+        <p id="marathonSubtitle"></p>
+    </div>
+</section>
+
+<section class="program-content" id="programContent">
+    <div class="program-container">
+        <div style="text-align: center; padding: 50px;">Загрузка программы...</div>
+    </div>
+</section>
+
+<script>
+    const SUPABASE_URL = 'https://bowbokskvpwlpkggswao.supabase.co';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJvd2Jva3NrdnB3bHBrZ2dzd2FvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM2ODcyODUsImV4cCI6MjA4OTI2MzI4NX0.s3GrEoE84ECDdH6wlX7ECfh2itVfL4w4o8DdqL4LFoA';
+
+    const currentUser = JSON.parse(sessionStorage.getItem('currentUser'));
+    if (!currentUser) window.location.href = 'index.html';
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const slug = urlParams.get('slug');
+
+    async function loadMarathon() {
+        const response = await fetch(`${SUPABASE_URL}/rest/v1/marathons?slug=eq.${slug}&select=*`, {
+            headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}` }
+        });
+        const data = await response.json();
+        const marathon = data[0];
+        
+        if (!marathon) {
+            document.getElementById('programContent').innerHTML = '<div style="text-align: center; padding: 50px;">Марафон не найден</div>';
+            return;
+        }
+        
+        document.getElementById('marathonTitle').textContent = marathon.title;
+        document.getElementById('marathonSubtitle').textContent = marathon.subtitle;
+        
+        let weeksHtml = '';
+        const weeks = marathon.weeks;
+        
+        if (weeks?.length) {
+            weeks.forEach(week => {
+                weeksHtml += `<div class="week-block"><h2>${week.title}</h2>`;
+                if (week.notes) {
+                    weeksHtml += `<div class="notes-block"><ul>${week.notes.map(n => `<li>${n}</li>`).join('')}</ul></div>`;
+                }
+                if (week.days) {
+                    week.days.forEach(day => {
+                        weeksHtml += `<div class="day-block"><h3>День ${day.day}. ${day.title}</h3>`;
+                        if (day.rest) weeksHtml += `<p class="rest-note">${day.rest}</p>`;
+                        weeksHtml += `<ul>${day.exercises.map(ex => `<li>${ex}</li>`).join('')}</ul></div>`;
+                    });
+                }
+                weeksHtml += `</div>`;
+            });
+        }
+        
+        document.getElementById('programContent').innerHTML = `
+            <div class="program-container">
+                <div class="program-info">
+                    <div class="info-card"><h3>График тренировок</h3><p>${marathon.training_schedule}</p></div>
+                    <div class="info-card"><h3>Принцип тренировок</h3><p>${marathon.training_principle}</p></div>
+                </div>
+                ${weeksHtml}
+                <div class="extra-block">
+                    <h2>Дополнительно</h2>
+                    <ul>
+                        <li><strong>Питание:</strong> ${marathon.nutrition}</li>
+                        <li><strong>Спортпит:</strong> ${marathon.supplements}</li>
+                        <li><strong>Сон:</strong> ${marathon.sleep}</li>
+                    </ul>
+                </div>
+            </div>
+        `;
+    }
+    
+    if (slug) loadMarathon();
+    else window.location.href = 'marathons.html';
+</script>
+<script src="load-header.js"></script>
+<script src="load-footer.js"></script>
+
+</body>
+</html>

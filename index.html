@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+
+    <meta charset="UTF-8">
+    <title>NutriFlow - Здоровое питание и фитнес</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/png" href="https://bowbokskvpwlpkggswao.supabase.co/storage/v1/object/public/image/favico.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+<header>
+        <div class="logo">
+        <img src="https://bowbokskvpwlpkggswao.supabase.co/storage/v1/object/public/image/LOGO2.png" alt="NutriFlow">
+    </div>
+    <nav>
+        <a href="#contacts" id="contactsLink">Контакты</a>
+        <button class="btn btn-outline" onclick="location.href='login.html'"><i class="fas fa-sign-in-alt"></i> Войти</button>
+        <button class="btn" onclick="location.href='login.html'"><i class="fas fa-user-plus"></i> Стать участником</button>
+    </nav>
+</header>
+
+<section class="hero">
+    <h1>NutriFlow</h1>
+    <p>Cервис, который превращает подсчет калорий в простой и понятный путь к здоровому телу</p>
+    <button class="btn" id="learnMoreBtn"><i class="fas fa-info-circle"></i> Узнать больше</button>
+</section>
+
+<section class="calculator">
+    <div class="calculator-header">
+        <h2><i class="fas fa-calculator"></i> Калькулятор калорий</h2>
+        <p class="calculator-subtitle">Рассчитайте свою дневную норму калорий для достижения цели</p>
+    </div>
+    
+    <div class="calculator-grid">
+        <!-- Блок 1: Основные параметры -->
+        <div class="calc-block">
+            <h3><i class="fas fa-user"></i> Основные параметры</h3>
+            <div class="input-group">
+                <div class="input-field">
+                    <label><i class="fas fa-venus-mars"></i> Пол</label>
+                    <select id="gender">
+                        <option value="male">Мужчина</option>
+                        <option value="female">Женщина</option>
+                    </select>
+                </div>
+                <div class="input-field">
+                    <label><i class="fas fa-calendar"></i> Возраст</label>
+                    <input type="number" id="age" placeholder="лет">
+                </div>
+                <div class="input-field">
+                    <label><i class="fas fa-ruler"></i> Рост</label>
+                    <input type="number" id="height" placeholder="см">
+                </div>
+                <div class="input-field">
+                    <label><i class="fas fa-weight-hanging"></i> Вес</label>
+                    <input type="number" id="weight" placeholder="кг">
+                </div>
+            </div>
+        </div>
+
+        <!-- Блок 2: Уровень активности -->
+        <div class="calc-block">
+            <h3><i class="fas fa-chart-line"></i> Уровень активности</h3>
+            <div class="activity-options">
+                <label class="activity-option">
+                    <input type="radio" name="activity" value="1.2">
+                    <span class="option-content">
+                        <i class="fas fa-couch"></i>
+                        <strong>Минимальный</strong>
+                        <small>Сидячий образ жизни</small>
+                    </span>
+                </label>
+                <label class="activity-option">
+                    <input type="radio" name="activity" value="1.375">
+                    <span class="option-content">
+                        <i class="fas fa-walking"></i>
+                        <strong>Легкий</strong>
+                        <small>1-3 дня в неделю</small>
+                    </span>
+                </label>
+                <label class="activity-option">
+                    <input type="radio" name="activity" value="1.55" checked>
+                    <span class="option-content">
+                        <i class="fas fa-running"></i>
+                        <strong>Средний</strong>
+                        <small>3-5 дней в неделю</small>
+                    </span>
+                </label>
+                <label class="activity-option">
+                    <input type="radio" name="activity" value="1.725">
+                    <span class="option-content">
+                        <i class="fas fa-dumbbell"></i>
+                        <strong>Высокий</strong>
+                        <small>6-7 дней в неделю</small>
+                    </span>
+                </label>
+                <label class="activity-option">
+                    <input type="radio" name="activity" value="1.9">
+                    <span class="option-content">
+                        <i class="fas fa-trophy"></i>
+                        <strong>Марафонец</strong>
+                        <small>Ежедневные интенсивные</small>
+                    </span>
+                </label>
+            </div>
+        </div>
+
+        <!-- Блок 3: Цель -->
+        <div class="calc-block">
+            <h3><i class="fas fa-bullseye"></i> Ваша цель</h3>
+            <div class="goal-options">
+                <button class="goal-btn" data-goal="lose" id="goalLose">
+                    <i class="fas fa-arrow-down"></i>
+                    <span>Похудение</span>
+                    <small>-500 ккал/день</small>
+                </button>
+                <button class="goal-btn" data-goal="maintain" id="goalMaintain">
+                    <i class="fas fa-equals"></i>
+                    <span>Поддержание</span>
+                    <small>Норма</small>
+                </button>
+                <button class="goal-btn" data-goal="gain" id="goalGain">
+                    <i class="fas fa-arrow-up"></i>
+                    <span>Набор массы</span>
+                    <small>+500 ккал/день</small>
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="calculator-action">
+        </button>
+        <div id="result" class="result-box">
+            <i class="fas fa-info-circle"></i> Заполните данные
+        </div>
+    </div>
+</section>
+
+<section class="bmi">
+    <div class="calculator-header">
+        <h2><i class="fas fa-heartbeat"></i> Калькулятор ИМТ</h2>
+        <p class="calculator-subtitle">Узнайте свой индекс массы тела</p>
+    </div>
+    
+    <div class="bmi-inputs">
+        <div class="input-field">
+            <label><i class="fas fa-ruler"></i> Рост (см)</label>
+            <input type="number" id="bmiHeight" placeholder="Введите рост">
+        </div>
+        <div class="input-field">
+            <label><i class="fas fa-weight-hanging"></i> Вес (кг)</label>
+            <input type="number" id="bmiWeight" placeholder="Введите вес">
+        </div>
+    </div>
+    
+    <div id="bmiResult" class="result-box">
+        <i class="fas fa-info-circle"></i> Заполните рост и вес
+    </div>
+</section>
+
+<!-- Модальное окно -->
+<div id="infoModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2><i class="fas fa-info-circle"></i> Как работает калькулятор</h2>
+            <span class="close-modal">&times;</span>
+        </div>
+        <div class="modal-body">
+            <p>Калькулятор использует формулу Mifflin-St. Jeor для расчета базального обмена веществ (BMR) — количество калорий, необходимых организму в состоянии покоя.</p>
+            
+            <h3>Формула расчета:</h3>
+            <div class="formula-card">
+                <p><strong>Мужчины:</strong> BMR = 10 × вес(кг) + 6.25 × рост(см) - 5 × возраст(лет) + 5</p>
+                <p><strong>Женщины:</strong> BMR = 10 × вес(кг) + 6.25 × рост(см) - 5 × возраст(лет) - 161</p>
+            </div>
+            
+            <h3>Коэффициент активности:</h3>
+            <ul class="info-list">
+                <li><span class="badge">1.2</span> Минимальный — сидячий образ жизни</li>
+                <li><span class="badge">1.375</span> Легкий — 1-3 дня в неделю</li>
+                <li><span class="badge">1.55</span> Средний — 3-5 дней в неделю</li>
+                <li><span class="badge">1.725</span> Высокий — 6-7 дней в неделю</li>
+                <li><span class="badge">1.9</span> Марафонец — ежедневные интенсивные тренировки</li>
+            </ul>
+            
+            <h3>Корректировка по цели:</h3>
+            <ul class="info-list">
+                <li><i class="fas fa-arrow-down"></i> Похудение: -500 ккал от суточной нормы</li>
+                <li><i class="fas fa-arrow-up"></i> Набор массы: +500 ккал</li>
+                <li><i class="fas fa-equals"></i> Поддержание: норма без изменений</li>
+            </ul>
+            
+            <h3><i class="fas fa-weight-scale"></i> Индекс массы тела (ИМТ)</h3>
+            <p>ИМТ = вес(кг) / (рост(м) × рост(м))</p>
+            <div class="bmi-info">
+                <span class="bmi-badge under">&lt; 18.5 — Недостаточный вес</span>
+                <span class="bmi-badge normal">18.5–24.9 — Норма</span>
+                <span class="bmi-badge over">25–29.9 — Избыточный вес</span>
+                <span class="bmi-badge obese">≥ 30 — Ожирение</span>
+            </div>
+            
+            <div class="info-note">
+                <i class="fas fa-star"></i>
+                <p><strong>Хотите сохранить результаты?</strong> Зарегистрируйтесь, чтобы отслеживать свой прогресс и получать персональные рекомендации!</p>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn close-modal-btn">Закрыть</button>
+            <button class="btn btn-primary" onclick="location.href='login.html'"><i class="fas fa-user-plus"></i> Присоединиться</button>
+        </div>
+    </div>
+</div>
+
+<footer id="contacts">
+    <div class="footer-content">
+        <div class="footer-section">
+            <h3>NutriFlow</h3>
+            <p>Сервис, который превращает подсчет калорий в простой и понятный путь к здоровому телу</p>
+        </div>
+        <div class="footer-section">
+            <h3><i class="fas fa-phone"></i> Контакты</h3>
+            <p><i class="fab fa-telegram"></i> +7 905 669 3766 - Администратор</p>
+            <p><i class="fab fa-telegram"></i> +7 950 628 2968 - Разработчик</p>
+            <p><i class="fab fa-telegram"></i> +7 929 048 9381 - Разработчик</p>
+            <p><i class="fab fa-telegram"></i> +7 952 470 0608 - Спорт. питание</p>
+        </div>
+        <div class="footer-section">
+            <h3><i class="fas fa-map"></i> Навигация</h3>
+            <p><a href="index.html">Главная</a></p>
+            <p><a href="login.html">Вход / Регистрация</a></p>
+            <p><a href="#contacts">Контакты</a></p>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <p>© 2026 NutriFlow</p>
+    </div>
+</footer>
+
+<script>
+    // ============================================
+    // NutriFlow - Главная страница (неавторизованный пользователь)
+    // Полностью переписанный скрипт
+    // ============================================
+
+    // ------------------- Глобальные переменные -------------------
+    let currentGoal = 'maintain';
+
+    // ------------------- DOM элементы -------------------
+    const DOM = {
+        // Элементы калькулятора калорий
+        gender: document.getElementById('gender'),
+        age: document.getElementById('age'),
+        height: document.getElementById('height'),
+        weight: document.getElementById('weight'),
+        calcBtn: document.getElementById('calcCaloriesBtn'),
+        result: document.getElementById('result'),
+        
+        // Элементы калькулятора ИМТ
+        bmiHeight: document.getElementById('bmiHeight'),
+        bmiWeight: document.getElementById('bmiWeight'),
+        bmiBtn: document.getElementById('calcBmiBtn'),
+        bmiResult: document.getElementById('bmiResult'),
+        
+        // Кнопки целей
+        goalLose: document.getElementById('goalLose'),
+        goalMaintain: document.getElementById('goalMaintain'),
+        goalGain: document.getElementById('goalGain'),
+        
+        // Активность (радиокнопки)
+        activityRadios: document.querySelectorAll('input[name="activity"]'),
+        
+        // Модальное окно
+        modal: document.getElementById('infoModal'),
+        learnMoreBtn: document.getElementById('learnMoreBtn'),
+        closeModalBtns: document.querySelectorAll('.close-modal, .close-modal-btn')
+    };
+
+    // ------------------- Инициализация -------------------
+    function init() {
+        setupEventListeners();
+        setupModal();
+        setupContactsScroll();
+    }
+
+    // ------------------- Настройка обработчиков -------------------
+    function setupEventListeners() {
+        if (DOM.calcBtn) DOM.calcBtn.addEventListener('click', calculateCalories);
+        if (DOM.bmiBtn) DOM.bmiBtn.addEventListener('click', calculateBMI);
+        
+        if (DOM.goalLose) DOM.goalLose.addEventListener('click', () => setGoal('lose'));
+        if (DOM.goalMaintain) DOM.goalMaintain.addEventListener('click', () => setGoal('maintain'));
+        if (DOM.goalGain) DOM.goalGain.addEventListener('click', () => setGoal('gain'));
+        
+        // Автоматический расчет при изменении полей
+        const autoCalcFields = [DOM.age, DOM.height, DOM.weight];
+        autoCalcFields.forEach(field => {
+            if (field) {
+                field.addEventListener('input', () => {
+                    if (DOM.age.value && DOM.height.value && DOM.weight.value) {
+                        calculateCalories();
+                    }
+                });
+            }
+        });
+        
+        // Автоматический расчет ИМТ
+        [DOM.bmiHeight, DOM.bmiWeight].forEach(field => {
+            if (field) {
+                field.addEventListener('input', () => {
+                    if (DOM.bmiHeight.value && DOM.bmiWeight.value) {
+                        calculateBMI();
+                    }
+                });
+            }
+        });
+        
+        // При изменении активности пересчитываем калории
+        DOM.activityRadios.forEach(radio => {
+            radio.addEventListener('change', () => {
+                if (DOM.age.value && DOM.height.value && DOM.weight.value) {
+                    calculateCalories();
+                }
+            });
+        });
+    }
+
+    // ------------------- Установка цели -------------------
+    function setGoal(goal) {
+        currentGoal = goal;
+        
+        if (DOM.goalLose) DOM.goalLose.classList.toggle('active', goal === 'lose');
+        if (DOM.goalMaintain) DOM.goalMaintain.classList.toggle('active', goal === 'maintain');
+        if (DOM.goalGain) DOM.goalGain.classList.toggle('active', goal === 'gain');
+        
+        if (DOM.age.value && DOM.height.value && DOM.weight.value) {
+            calculateCalories();
+        }
+    }
+
+    // Получение выбранного уровня активности
+    function getActivityValue() {
+        const selected = document.querySelector('input[name="activity"]:checked');
+        return selected ? parseFloat(selected.value) : 1.55;
+    }
+
+    // ------------------- Расчет калорий -------------------
+    function calculateCalories() {
+        const gender = DOM.gender?.value;
+        const age = parseInt(DOM.age?.value);
+        const height = parseInt(DOM.height?.value);
+        const weight = parseInt(DOM.weight?.value);
+        const activity = getActivityValue();
+        
+        if (!age || !height || !weight) {
+            showResult('result', 'warning', 'Заполните все поля (возраст, рост, вес)');
+            return;
+        }
+        
+        if (age <= 0 || height <= 0 || weight <= 0) {
+            showResult('result', 'warning', 'Значения должны быть больше нуля');
+            return;
+        }
+        
+        if (age > 120) {
+            showResult('result', 'warning', 'Пожалуйста, введите корректный возраст');
+            return;
+        }
+        
+        let bmr;
+        if (gender === 'male') {
+            bmr = 10 * weight + 6.25 * height - 5 * age + 5;
+        } else {
+            bmr = 10 * weight + 6.25 * height - 5 * age - 161;
+        }
+        
+        let calories = bmr * activity;
+        
+        const goalAdjustments = { lose: -500, gain: 500, maintain: 0 };
+        calories += goalAdjustments[currentGoal] || 0;
+        calories = Math.max(calories, 1200);
+        
+        const goalText = { lose: 'для похудения', gain: 'для набора массы', maintain: 'для поддержания веса' };
+        
+        showResult('result', 'success', `
+            <i class="fas fa-fire"></i> 
+            Ваша дневная норма: <strong>${Math.round(calories)}</strong> ккал 
+            <span style="font-size:0.8rem; opacity:0.8;">${goalText[currentGoal]}</span>
+        `);
+    }
+
+    // ------------------- Расчет ИМТ -------------------
+    function calculateBMI() {
+        const height = parseInt(DOM.bmiHeight?.value);
+        const weight = parseInt(DOM.bmiWeight?.value);
+        
+        if (!height || !weight) {
+            showResult('bmiResult', 'warning', 'Заполните рост и вес');
+            return;
+        }
+        
+        if (height <= 0 || weight <= 0) {
+            showResult('bmiResult', 'warning', 'Значения должны быть больше нуля');
+            return;
+        }
+        
+        if (height > 300 || weight > 500) {
+            showResult('bmiResult', 'warning', 'Пожалуйста, введите корректные значения');
+            return;
+        }
+        
+        const heightMeters = height / 100;
+        const bmi = weight / (heightMeters * heightMeters);
+        
+        let category, icon, color;
+        if (bmi < 18.5) {
+            category = 'Недостаточный вес';
+            icon = 'fa-exclamation-circle';
+            color = '#856404';
+        } else if (bmi < 25) {
+            category = 'Нормальный вес';
+            icon = 'fa-smile';
+            color = '#28a745';
+        } else if (bmi < 30) {
+            category = 'Избыточный вес';
+            icon = 'fa-exclamation-triangle';
+            color = '#fd7e14';
+        } else {
+            category = 'Ожирение';
+            icon = 'fa-heartbeat';
+            color = '#dc3545';
+        }
+        
+        showResult('bmiResult', 'success', `
+            <i class="fas ${icon}" style="color: ${color};"></i> 
+            Ваш ИМТ: <strong>${bmi.toFixed(1)}</strong> 
+            <span style="background: ${color}20; color: ${color}; padding: 0.2rem 0.6rem; border-radius: 20px; font-size:0.8rem;">${category}</span>
+        `);
+    }
+
+    // ------------------- Вывод результата -------------------
+    function showResult(elementId, type, message) {
+        const element = document.getElementById(elementId);
+        if (!element) return;
+        
+        const styles = {
+            warning: { background: '#fff3cd', color: '#856404' },
+            success: { background: '#e8f0fe', color: '#2a7de1' }
+        };
+        
+        const style = styles[type] || styles.success;
+        
+        element.innerHTML = message;
+        element.style.background = style.background;
+        element.style.color = style.color;
+        element.style.padding = '1rem';
+        element.style.borderRadius = '16px';
+        element.style.display = 'block';
+    }
+
+    // ------------------- Модальное окно -------------------
+    function setupModal() {
+        if (!DOM.modal) return;
+        
+        if (DOM.learnMoreBtn) {
+            DOM.learnMoreBtn.addEventListener('click', () => DOM.modal.classList.add('show'));
+        }
+        
+        DOM.closeModalBtns.forEach(btn => {
+            btn.addEventListener('click', () => DOM.modal.classList.remove('show'));
+        });
+        
+        window.addEventListener('click', (e) => {
+            if (e.target === DOM.modal) DOM.modal.classList.remove('show');
+        });
+    }
+
+    // ------------------- Прокрутка к контактам -------------------
+    function setupContactsScroll() {
+        const contactsLink = document.getElementById('contactsLink');
+        if (contactsLink) {
+            contactsLink.addEventListener('click', (e) => {
+                e.preventDefault();
+                const footer = document.querySelector('footer');
+                if (footer) {
+                    footer.scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+        }
+    }
+
+    // ------------------- Запуск -------------------
+    document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>
