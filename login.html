@@ -28,9 +28,9 @@
                 <label><i class="fas fa-lock"></i> Пароль</label>
                 <input type="password" id="loginPassword" placeholder="··········" required>
                 <button type="submit" class="btn" id="loginBtn">Войти</button>
-<div class="forgot-password">
-    <a href="forgot-password.html" class="forgot-link">Забыли пароль?</a>
-</div>
+                <div class="forgot-password">
+                    <a href="forgot-password.html" class="forgot-link">Забыли пароль?</a>
+                </div>
             </form>
         </div>
         
@@ -104,27 +104,16 @@
                 <p><strong>Настоящее Соглашение</strong> определяет условия использования сайта NutriFlow.</p>
                 
                 <h3><i class="fas fa-info-circle"></i> 1. Информационный характер</h3>
-                <p>Вся информация на Сайте (расчеты калорий, рекомендации по питанию, программы тренировок, марафоны, спортивные добавки) носит исключительно информационный характер и <strong>не является медицинской консультацией</strong>.</p>
+                <p>Вся информация на Сайте носит информационный характер и <strong>не является медицинской консультацией</strong>.</p>
                 
                 <h3><i class="fas fa-pills"></i> 2. Спортивное питание и добавки</h3>
-                <p><strong>Администрация Сайта НЕ НЕСЕТ ОТВЕТСТВЕННОСТИ</strong> за любые последствия приема спортивных добавок и БАД. Решение о приеме принимается Пользователем на свой страх и риск. <strong>Рекомендуется консультация врача</strong>.</p>
+                <p><strong>Администрация Сайта НЕ НЕСЕТ ОТВЕТСТВЕННОСТИ</strong> за любые последствия приема спортивных добавок.</p>
                 
                 <h3><i class="fas fa-dumbbell"></i> 3. Фитнес-марафоны и тренировки</h3>
-                <p><strong>Администрация Сайта НЕ НЕСЕТ ОТВЕТСТВЕННОСТИ</strong> за травмы, ухудшение состояния здоровья или иные негативные последствия, возникшие в результате выполнения программ тренировок и марафонов. Перед началом любых физических нагрузок <strong>обязательно проконсультируйтесь с врачом</strong>.</p>
+                <p><strong>Администрация Сайта НЕ НЕСЕТ ОТВЕТСТВЕННОСТИ</strong> за травмы, ухудшение состояния здоровья.</p>
                 
                 <h3><i class="fas fa-gavel"></i> 4. Полное освобождение от ответственности</h3>
-                <p><strong>АДМИНИСТРАЦИЯ САЙТА НЕ НЕСЕТ ОТВЕТСТВЕННОСТИ ЗА ЛЮБЫЕ ПОСЛЕДСТВИЯ, СВЯЗАННЫЕ С ИСПОЛЬЗОВАНИЕМ САЙТА, ВКЛЮЧАЯ ВРЕД ЗДОРОВЬЮ, УЩЕРБ ИМУЩЕСТВУ, УПУЩЕННУЮ ВЫГОДУ.</strong></p>
-                
-                <div class="info-note" style="background: #f0f4fa; padding: 1rem; border-radius: 12px; margin: 1rem 0;">
-                    <i class="fas fa-check-circle" style="color: #2a7de1;"></i>
-                    <p style="margin: 0; display: inline-block; margin-left: 0.5rem;"><strong>Регистрация на Сайте</strong> означает полное и безоговорочное принятие настоящего Соглашения.</p>
-                </div>
-                
-                <h3><i class="fas fa-calendar-alt"></i> Дата обновления</h3>
-                <p>30 марта 2026 г.</p>
-                
-                <h3><i class="fas fa-envelope"></i> Контакты для вопросов</h3>
-                <p>support@nutriflow.ru</p>
+                <p><strong>АДМИНИСТРАЦИЯ САЙТА НЕ НЕСЕТ ОТВЕТСТВЕННОСТИ ЗА ЛЮБЫЕ ПОСЛЕДСТВИЯ</strong></p>
             </div>
             <div class="modal-footer">
                 <button class="btn close-modal-btn" id="declineTermsBtn">Отказаться</button>
@@ -133,9 +122,13 @@
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
+        // ========== ИНИЦИАЛИЗАЦИЯ SUPABASE ==========
         const SUPABASE_URL = 'https://bowbokskvpwlpkggswao.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJvd2Jva3NrdnB3bHBrZ2dzd2FvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM2ODcyODUsImV4cCI6MjA4OTI2MzI4NX0.s3GrEoE84ECDdH6wlX7ECfh2itVfL4w4o8DdqL4LFoA';
+        
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         // Вспомогательные функции
         function hashPassword(password) {
@@ -186,133 +179,123 @@
             const termsCheckbox = document.getElementById('termsAgree');
             const registerBtn = document.getElementById('registerBtn');
 
-            // Открытие модального окна
             if (termsLink) {
-                termsLink.addEventListener('click', function(e) {
+                termsLink.addEventListener('click', (e) => {
                     e.preventDefault();
                     modal.classList.add('show');
                 });
             }
 
-            // Закрытие крестиком
             closeBtns.forEach(btn => {
-                btn.addEventListener('click', function() {
-                    modal.classList.remove('show');
-                });
+                btn.addEventListener('click', () => modal.classList.remove('show'));
             });
 
-            // Принять условия
             if (acceptBtn) {
-                acceptBtn.addEventListener('click', function() {
+                acceptBtn.addEventListener('click', () => {
                     termsCheckbox.checked = true;
                     registerBtn.disabled = false;
                     modal.classList.remove('show');
                 });
             }
 
-            // Отказаться
             if (declineBtn) {
-                declineBtn.addEventListener('click', function() {
+                declineBtn.addEventListener('click', () => {
                     termsCheckbox.checked = false;
                     registerBtn.disabled = true;
                     modal.classList.remove('show');
                 });
             }
 
-            // Закрытие при клике вне окна
-            window.addEventListener('click', function(e) {
-                if (e.target === modal) {
-                    modal.classList.remove('show');
-                }
+            window.addEventListener('click', (e) => {
+                if (e.target === modal) modal.classList.remove('show');
             });
 
-            // Чекбокс
             if (termsCheckbox) {
-                termsCheckbox.addEventListener('change', function() {
-                    registerBtn.disabled = !this.checked;
+                termsCheckbox.addEventListener('change', () => {
+                    registerBtn.disabled = !termsCheckbox.checked;
                 });
             }
         }
 
-// ========== РЕГИСТРАЦИЯ (обновленная версия) ==========
-async function registerUser(e) {
-    e.preventDefault();
-    
-    const email = document.getElementById('regEmail').value.trim().toLowerCase();
-    const password = document.getElementById('regPassword').value;
-    const username = `${document.getElementById('regName').value.trim()} ${document.getElementById('regSurname').value.trim()}`;
-    
-    if (password.length < 6) {
-        showAlert('registerAlert', 'Пароль должен быть не менее 6 символов');
-        return;
-    }
-    
-    const btn = document.getElementById('registerBtn');
-    btn.disabled = true;
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Регистрация...';
-    hideAlert('registerAlert');
-    
-    try {
-        // 1. Создаем пользователя в Supabase Auth
-        const { data: authData, error: authError } = await supabase.auth.signUp({
-            email: email,
-            password: password,
-            options: {
-                data: {
-                    username: username,
-                    full_name: username
-                }
+        // ========== РЕГИСТРАЦИЯ ==========
+        async function registerUser(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('regEmail').value.trim().toLowerCase();
+            const password = document.getElementById('regPassword').value;
+            const username = `${document.getElementById('regName').value.trim()} ${document.getElementById('regSurname').value.trim()}`;
+            
+            if (password.length < 6) {
+                showAlert('registerAlert', 'Пароль должен быть не менее 6 символов');
+                return;
             }
-        });
-        
-        if (authError) throw authError;
-        
-        if (!authData.user) {
-            throw new Error('Не удалось создать пользователя');
+            
+            const btn = document.getElementById('registerBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Регистрация...';
+            hideAlert('registerAlert');
+            
+            try {
+                // 1. Создаем пользователя в Supabase Auth
+                const { data: authData, error: authError } = await supabase.auth.signUp({
+                    email: email,
+                    password: password,
+                    options: {
+                        data: {
+                            username: username,
+                            full_name: username
+                        }
+                    }
+                });
+                
+                if (authError) throw authError;
+                
+                if (!authData.user) {
+                    throw new Error('Не удалось создать пользователя');
+                }
+                
+                const userId = authData.user.id;
+                
+                // 2. Создаем профиль в таблице user_profiles
+                await supabaseRequest('user_profiles', {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        user_id: userId,
+                        gender: document.getElementById('regGender').value,
+                        birth_year: document.getElementById('regBirthYear').value || null,
+                        height: document.getElementById('regHeight').value || null,
+                        weight: document.getElementById('regWeight').value || null,
+                        activity_level: document.getElementById('regActivity').value,
+                        goal: document.getElementById('regGoal').value,
+                        target_weight: document.getElementById('regTargetWeight').value || null
+                    })
+                });
+                
+                // 3. Создаем запись в таблице users
+                await supabaseRequest('users', {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        id: userId,
+                        username: username,
+                        email: email,
+                        password_hash: hashPassword(password),
+                        created_at: new Date().toISOString()
+                    })
+                });
+                
+                showAlert('registerAlert', 'Регистрация успешна! Теперь вы можете войти.', false);
+                document.getElementById('registerForm').reset();
+                document.getElementById('termsAgree').checked = false;
+                document.getElementById('registerBtn').disabled = true;
+                
+            } catch (error) {
+                console.error(error);
+                showAlert('registerAlert', error.message || 'Ошибка при регистрации');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = 'Зарегистрироваться';
+            }
         }
-        
-        const userId = authData.user.id;
-        
-        // 2. Создаем профиль в вашей таблице user_profiles
-        await supabaseRequest('user_profiles', {
-            method: 'POST',
-            body: JSON.stringify({
-                user_id: userId,
-                gender: document.getElementById('regGender').value,
-                birth_year: document.getElementById('regBirthYear').value || null,
-                height: document.getElementById('regHeight').value || null,
-                weight: document.getElementById('regWeight').value || null,
-                activity_level: document.getElementById('regActivity').value,
-                goal: document.getElementById('regGoal').value,
-                target_weight: document.getElementById('regTargetWeight').value || null
-            })
-        });
-        
-        // 3. Сохраняем пользователя в вашу таблицу users (опционально)
-        await supabaseRequest('users', {
-            method: 'POST',
-            body: JSON.stringify({
-                id: userId,
-                username: username,
-                email: email,
-                password_hash: hashPassword(password),
-                created_at: new Date().toISOString()
-            })
-        });
-        
-        showAlert('registerAlert', 'Регистрация успешна! Теперь вы можете войти.', false);
-        document.getElementById('registerForm').reset();
-        document.getElementById('termsAgree').checked = false;
-        document.getElementById('registerBtn').disabled = true;
-        
-    } catch (error) {
-        console.error(error);
-        showAlert('registerAlert', error.message || 'Ошибка при регистрации');
-    } finally {
-        btn.disabled = false;
-        btn.innerHTML = 'Зарегистрироваться';
-    }
-}
 
         // ========== ВХОД ==========
         async function loginUser(e) {
@@ -327,25 +310,25 @@ async function registerUser(e) {
             hideAlert('loginAlert');
             
             try {
-                const users = await supabaseRequest(`users?email=eq.${encodeURIComponent(email)}`);
-                if (!users?.length) {
-                    showAlert('loginAlert', 'Пользователь не найден');
-                    return;
-                }
+                // Вход через Supabase Auth
+                const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
+                    email: email,
+                    password: password
+                });
                 
-                const user = users[0];
-                if (user.password_hash !== hashPassword(password)) {
-                    showAlert('loginAlert', 'Неверный пароль');
-                    return;
-                }
+                if (authError) throw authError;
                 
-                const profiles = await supabaseRequest(`user_profiles?user_id=eq.${user.id}`);
-                sessionStorage.setItem('currentUser', JSON.stringify({
-                    id: user.id,
-                    username: user.username,
-                    email: user.email,
+                // Получаем профиль из таблицы user_profiles
+                const profiles = await supabaseRequest(`user_profiles?user_id=eq.${authData.user.id}`);
+                
+                const userData = {
+                    id: authData.user.id,
+                    username: authData.user.user_metadata?.username || email,
+                    email: email,
                     profile: profiles?.[0] || null
-                }));
+                };
+                
+                sessionStorage.setItem('currentUser', JSON.stringify(userData));
                 
                 showAlert('loginAlert', 'Вход выполнен! Перенаправление...', false);
                 setTimeout(() => {
@@ -354,7 +337,7 @@ async function registerUser(e) {
                 
             } catch (error) {
                 console.error(error);
-                showAlert('loginAlert', 'Ошибка при входе');
+                showAlert('loginAlert', error.message || 'Ошибка при входе');
             } finally {
                 btn.disabled = false;
                 btn.innerHTML = 'Войти';
@@ -362,7 +345,7 @@ async function registerUser(e) {
         }
 
         // ========== ИНИЦИАЛИЗАЦИЯ ==========
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', () => {
             setupTermsModal();
             
             const registerForm = document.getElementById('registerForm');
