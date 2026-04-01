@@ -30,7 +30,7 @@
             gap: 1rem;
         }
         .map-header h2 { font-size: 1.3rem; margin: 0; display: flex; align-items: center; gap: 0.5rem; }
-        .location-controls { display: flex; gap: 1rem; flex-wrap: wrap; }
+        .location-controls { display: flex; gap: 1rem; flex-wrap: wrap; align-items: center; }
         .location-btn {
             background: linear-gradient(135deg, #2a7de1, #1c5eb0);
             color: white;
@@ -150,10 +150,8 @@
     let userMarker = null;
     let searchPointMarker = null;
 
-    // Радиус поиска 40 км
     const SEARCH_RADIUS = 40000;
 
-    // Инициализация карты
     function initMap(centerLat = 55.7558, centerLng = 37.6176, zoom = 12) {
         if (map) return;
         
@@ -164,7 +162,6 @@
                 key: DG_API_KEY
             });
             
-            // Добавляем обработчик клика по карте
             map.on('click', function(e) {
                 const lat = e.latlng.lat;
                 const lng = e.latlng.lng;
@@ -173,32 +170,26 @@
         });
     }
 
-    // Поиск спортзалов вокруг точки
     async function searchAtPoint(lat, lng, isUserLocation = false) {
         const statusDiv = document.getElementById('locationStatus');
         const grid = document.getElementById('gymsGrid');
         const searchPointInfo = document.getElementById('searchPointInfo');
         
         currentSearchPoint = { lat, lng };
-        
-        // Обновляем информацию о точке поиска
-        searchPointInfo.innerHTML = `<i class="fas fa-map-pin"></i> Поиск в точке: ${lat.toFixed(4)}, ${lng.toFixed(4)}`;
+        searchPointInfo.innerHTML = `<i class="fas fa-map-pin"></i> Координаты: ${lat.toFixed(4)}, ${lng.toFixed(4)}`;
         
         statusDiv.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Поиск спортзалов в радиусе 40 км...';
         grid.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i> Загрузка...</div>';
         
-        // Обновляем маркер точки поиска на карте
+        // Удаляем старый маркер точки поиска
         if (searchPointMarker) map.removeLayer(searchPointMarker);
+        
+        // Создаем маркер точки поиска (красный круг)
         searchPointMarker = DG.marker([lat, lng], {
-            icon: DG.icon({
-                iconUrl: 'https://maps.api.2gis.ru/2.0/img/marker-pin-red.png',
-                iconSize: [30, 42],
-                iconAnchor: [15, 42]
-            })
+            preset: 'islands#redCircleIcon'
         }).addTo(map).bindPopup('📍 Точка поиска<br>Ищем спортзалы в радиусе 40 км');
         
         try {
-            // Ищем спортзалы в радиусе 40 км
             const searchUrl = `https://catalog.api.2gis.ru/3.0/items?q=фитнес клуб тренажерный зал&point=${lng},${lat}&radius=${SEARCH_RADIUS}&sort=distance&fields=items.point,items.name,items.address,items.address_name,items.contact_groups,items.schedule,items.external_content&key=${DG_API_KEY}`;
             
             const response = await fetch(searchUrl);
@@ -216,25 +207,21 @@
                     distance: getDistance(lat, lng, item.point.lat, item.point.lon)
                 }));
                 
-                // Сортируем по расстоянию
                 currentGyms.sort((a, b) => a.distance - b.distance);
                 
-                statusDiv.innerHTML = `<i class="fas fa-check-circle" style="color: #28a745;"></i> Найдено ${currentGyms.length} спортзалов в радиусе 40 км от выбранной точки`;
+                statusDiv.innerHTML = `<i class="fas fa-check-circle" style="color: #28a745;"></i> Найдено ${currentGyms.length} спортзалов в радиусе 40 км`;
                 loadMarkersOnMap();
                 renderGymsList();
-                
-                // Центрируем карту на точке поиска
                 map.setView([lat, lng], 11);
             } else {
-                statusDiv.innerHTML = `<i class="fas fa-info-circle" style="color: #fd7e14;"></i> Спортзалы не найдены в радиусе 40 км от выбранной точки`;
+                statusDiv.innerHTML = `<i class="fas fa-info-circle" style="color: #fd7e14;"></i> Спортзалы не найдены в радиусе 40 км`;
                 grid.innerHTML = `
                     <div class="empty-state">
                         <i class="fas fa-frown"></i>
                         <h3>Ничего не найдено</h3>
-                        <p>В радиусе 40 км от выбранной точки не найдено спортзалов.<br>Попробуйте кликнуть в другом месте.</p>
+                        <p>В радиусе 40 км от выбранной точки не найдено спортзалов.</p>
                     </div>
                 `;
-                // Очищаем маркеры спортзалов
                 markers.forEach(m => map.removeLayer(m));
                 markers = [];
             }
@@ -251,7 +238,6 @@
         }
     }
 
-    // Извлечение телефона
     function extractPhone(contactGroups) {
         if (!contactGroups) return 'не указан';
         for (let group of contactGroups) {
@@ -266,7 +252,6 @@
         return 'не указан';
     }
 
-    // Извлечение графика работы
     function extractSchedule(schedule) {
         if (!schedule) return 'информация отсутствует';
         
@@ -297,7 +282,6 @@
         return 'информация отсутствует';
     }
 
-    // Расчет расстояния
     function getDistance(lat1, lon1, lat2, lon2) {
         const R = 6371e3;
         const φ1 = lat1 * Math.PI / 180;
@@ -311,7 +295,6 @@
         return R * c;
     }
 
-    // Загрузка маркеров на карту
     function loadMarkersOnMap() {
         if (!map) return;
         
@@ -319,23 +302,22 @@
         markers = [];
         
         currentGyms.forEach(gym => {
-            const marker = DG.marker([gym.lat, gym.lng])
-                .addTo(map)
-                .bindPopup(`
-                    <div style="max-width: 280px;">
-                        <b>${gym.name}</b><br>
-                        📍 ${gym.address}<br>
-                        📞 ${gym.phone}<br>
-                        🕐 ${gym.schedule}<br>
-                        📏 ${Math.round(gym.distance)} м от точки поиска<br>
-                        <a href="https://yandex.ru/maps/?text=${encodeURIComponent(gym.address)}" target="_blank">🗺️ Построить маршрут</a>
-                    </div>
-                `);
+            const marker = DG.marker([gym.lat, gym.lng], {
+                preset: 'islands#blueSportIcon'
+            }).addTo(map).bindPopup(`
+                <div style="max-width: 280px;">
+                    <b>${gym.name}</b><br>
+                    📍 ${gym.address}<br>
+                    📞 ${gym.phone}<br>
+                    🕐 ${gym.schedule}<br>
+                    📏 ${Math.round(gym.distance)} м от точки поиска<br>
+                    <a href="https://yandex.ru/maps/?text=${encodeURIComponent(gym.address)}" target="_blank">🗺️ Построить маршрут</a>
+                </div>
+            `);
             markers.push(marker);
         });
     }
 
-    // Отображение списка спортзалов
     function renderGymsList() {
         const grid = document.getElementById('gymsGrid');
         
@@ -359,7 +341,6 @@
         if (map) map.setView([lat, lng], 17);
     }
 
-    // Определение местоположения пользователя
     function getCurrentLocation() {
         const statusDiv = document.getElementById('locationStatus');
         statusDiv.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Определение местоположения...';
@@ -373,30 +354,16 @@
                     statusDiv.innerHTML = `<i class="fas fa-check-circle" style="color: #28a745;"></i> Местоположение определено`;
                     
                     if (map) {
-                        // Удаляем старую метку пользователя
                         if (userMarker) map.removeLayer(userMarker);
                         userMarker = DG.marker([lat, lng], {
-                            icon: DG.icon({
-                                iconUrl: 'https://maps.api.2gis.ru/2.0/img/marker-pin-blue.png',
-                                iconSize: [30, 42],
-                                iconAnchor: [15, 42]
-                            })
+                            preset: 'islands#blueCircleIcon'
                         }).addTo(map).bindPopup('📍 Вы здесь');
                     }
                     
-                    // Ищем спортзалы вокруг местоположения пользователя
                     searchAtPoint(lat, lng, true);
                 },
                 (error) => {
-                    let errorMessage = '';
-                    switch(error.code) {
-                        case error.PERMISSION_DENIED:
-                            errorMessage = 'Доступ к геолокации запрещен. Разрешите доступ в настройках браузера.';
-                            break;
-                        default:
-                            errorMessage = 'Не удалось определить местоположение. Кликните по карте для поиска.';
-                    }
-                    statusDiv.innerHTML = `<i class="fas fa-exclamation-triangle" style="color: #dc3545;"></i> ${errorMessage}`;
+                    statusDiv.innerHTML = `<i class="fas fa-exclamation-triangle" style="color: #dc3545;"></i> Доступ к геолокации запрещен. Кликните по карте для поиска.`;
                 }
             );
         } else {
@@ -412,7 +379,6 @@
         }
     }
 
-    // Обработчики
     document.addEventListener('DOMContentLoaded', () => {
         initMap();
         
