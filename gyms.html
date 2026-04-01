@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>NutriFlow - Спортзалы</title>
+    <title>NutriFlow - Спортзалы рядом</title>
     <link rel="icon" type="image/png" href="https://bowbokskvpwlpkggswao.supabase.co/storage/v1/object/public/image/favico.png">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -173,6 +173,12 @@
             font-size: 0.8rem;
             color: #666;
             padding: 0.5rem 1rem;
+            text-align: center;
+        }
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: #666;
         }
         @media (max-width: 768px) {
             .map-header {
@@ -197,7 +203,7 @@
 
 <section class="gyms-hero">
     <h1><i class="fas fa-dumbbell"></i> Спортзалы рядом</h1>
-    <p>Найдите лучшие фитнес-клубы и тренажерные залы в вашем городе</p>
+    <p>Найдите ближайшие фитнес-клубы и тренажерные залы</p>
 </section>
 
 <div class="map-container">
@@ -206,15 +212,17 @@
             <h2><i class="fas fa-map-marker-alt"></i> Карта спортзалов</h2>
             <div class="location-controls">
                 <div class="search-box">
-                    <input type="text" id="citySearch" placeholder="Введите город..." value="Москва">
+                    <input type="text" id="citySearch" placeholder="Введите город...">
                     <button id="searchCityBtn"><i class="fas fa-search"></i></button>
                 </div>
-                <button id="getLocationBtn" class="location-btn"><i class="fas fa-location-dot"></i> Моё местоположение</button>
+                <button id="refreshLocationBtn" class="location-btn"><i class="fas fa-location-dot"></i> Обновить местоположение</button>
                 <button id="resetMapBtn" class="location-btn outline"><i class="fas fa-globe"></i> Сброс</button>
             </div>
         </div>
         <div id="map"></div>
-        <div id="locationStatus" class="location-status"></div>
+        <div id="locationStatus" class="location-status">
+            <i class="fas fa-spinner fa-spin"></i> Определение местоположения...
+        </div>
     </div>
 </div>
 
@@ -232,23 +240,17 @@
     const currentUser = JSON.parse(sessionStorage.getItem('currentUser'));
     if (!currentUser) window.location.href = 'index.html';
 
-    // ========== ВАШ API-КЛЮЧ 2ГИС (вставьте сюда) ==========
-    const DG_API_KEY = '2e0fda04-8be1-4dc5-8d08-eb825936fff9';  // ← СЮДА ВСТАВЬТЕ КЛЮЧ
-
-    // Список спортзалов (координаты для Москвы)
-    const gyms = [
-        { name: "World Class", address: "ул. Тверская, 15", lat: 55.7558, lng: 37.6176, metro: "Тверская", price: "от 5000 ₽/мес" },
-        { name: "X-Fit", address: "Кутузовский пр-т, 36", lat: 55.7394, lng: 37.5355, metro: "Кутузовская", price: "от 4500 ₽/мес" },
-        { name: "Orange Fitness", address: "ул. Большая Дмитровка, 23", lat: 55.7645, lng: 37.6092, metro: "Пушкинская", price: "от 4000 ₽/мес" },
-        { name: "FitCurves", address: "Ленинградский пр-т, 47", lat: 55.7902, lng: 37.5577, metro: "Динамо", price: "от 3500 ₽/мес" },
-        { name: "Zebra Gym", address: "ул. Арбат, 20", lat: 55.7512, lng: 37.5893, metro: "Арбатская", price: "от 3000 ₽/мес" },
-        { name: "Gym Fitness", address: "Проспект Мира, 49", lat: 55.7783, lng: 37.6295, metro: "Проспект Мира", price: "от 2500 ₽/мес" },
-        { name: "SportLand", address: "ул. Новый Арбат, 15", lat: 55.7534, lng: 37.5858, metro: "Арбатская", price: "от 3800 ₽/мес" },
-        { name: "Power House", address: "ул. Пятницкая, 38", lat: 55.7412, lng: 37.6243, metro: "Новокузнецкая", price: "от 4200 ₽/мес" }
-    ];
+    // ========== ВАШ API-КЛЮЧ 2ГИС ==========
+    const DG_API_KEY = 'ВАШ_КЛЮЧ_2ГИС_ЗДЕСЬ';  // ← ВСТАВЬТЕ ВАШ КЛЮЧ
 
     let map;
     let markers = [];
+    let currentGyms = [];
+    let userLocation = null;
+
+    // Категория поиска: фитнес-клубы
+    const SEARCH_CATEGORY = 'фитнес-клуб';
+    const SEARCH_RADIUS = 3000; // радиус поиска в метрах (3 км)
 
     // Инициализация карты
     function initMap(centerLat = 55.7558, centerLng = 37.6176, zoom = 12) {
@@ -261,12 +263,56 @@
                 key: DG_API_KEY
             });
             
-            loadMarkers();
+            // Если уже есть местоположение, загружаем спортзалы
+            if (userLocation) {
+                searchGymsNearby(userLocation.lat, userLocation.lng);
+            }
         });
     }
 
+    // Поиск спортзалов через API 2ГИС
+    async function searchGymsNearby(lat, lng) {
+        const statusDiv = document.getElementById('locationStatus');
+        const grid = document.getElementById('gymsGrid');
+        
+        statusDiv.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Поиск спортзалов рядом...';
+        grid.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i> Загрузка спортзалов...</div>';
+        
+        try {
+            // Используем поисковый API 2ГИС для поиска организаций по категории
+            const url = `https://catalog.api.2gis.ru/3.0/items?q=${encodeURIComponent(SEARCH_CATEGORY)}&point=${lng},${lat}&radius=${SEARCH_RADIUS}&sort=distance&fields=items.point,items.name,items.address,items.contact_groups,items.schedule,items.external_content&key=${DG_API_KEY}`;
+            
+            const response = await fetch(url);
+            const data = await response.json();
+            
+            if (data.result && data.result.items && data.result.items.length > 0) {
+                currentGyms = data.result.items.map(item => ({
+                    id: item.id,
+                    name: item.name,
+                    address: item.address_name || item.address,
+                    lat: item.point.lat,
+                    lng: item.point.lon,
+                    phone: item.contact_groups?.[0]?.contacts?.[0]?.value || 'не указан',
+                    schedule: item.schedule || 'информация отсутствует',
+                    rating: item.external_content?.rating || null
+                }));
+                
+                statusDiv.innerHTML = `<i class="fas fa-check-circle" style="color: #28a745;"></i> Найдено ${currentGyms.length} спортзалов рядом с вами`;
+                loadMarkersOnMap();
+                renderGymsList();
+            } else {
+                statusDiv.innerHTML = '<i class="fas fa-info-circle" style="color: #fd7e14;"></i> Спортзалы не найдены. Попробуйте увеличить радиус или изменить местоположение.';
+                grid.innerHTML = '<div class="loading">🏋️ Спортзалы не найдены поблизости</div>';
+            }
+        } catch (error) {
+            console.error('Ошибка поиска:', error);
+            statusDiv.innerHTML = '<i class="fas fa-exclamation-triangle" style="color: #dc3545;"></i> Ошибка загрузки спортзалов. Проверьте подключение.';
+            grid.innerHTML = '<div class="loading">⚠️ Ошибка загрузки данных</div>';
+        }
+    }
+
     // Загрузка маркеров на карту
-    function loadMarkers() {
+    function loadMarkersOnMap() {
         if (!map) return;
         
         // Удаляем старые маркеры
@@ -274,32 +320,45 @@
         markers = [];
         
         // Добавляем новые маркеры
-        gyms.forEach(gym => {
+        currentGyms.forEach(gym => {
             const marker = DG.marker([gym.lat, gym.lng])
                 .addTo(map)
                 .bindPopup(`
                     <b>${gym.name}</b><br>
                     📍 ${gym.address}<br>
-                    🚇 ${gym.metro}<br>
-                    💰 ${gym.price}<br>
+                    📞 ${gym.phone}<br>
+                    🕐 ${gym.schedule}<br>
                     <a href="https://yandex.ru/maps/?text=${gym.address}" target="_blank">Построить маршрут</a>
                 `);
             markers.push(marker);
         });
         
-        renderGymsList();
+        // Если есть залы, показываем их все на карте
+        if (currentGyms.length > 0 && map.getZoom() > 10) {
+            const bounds = [];
+            currentGyms.forEach(gym => bounds.push([gym.lat, gym.lng]));
+            if (bounds.length > 0) {
+                map.fitBounds(bounds);
+            }
+        }
     }
 
     // Отображение списка спортзалов
     function renderGymsList() {
         const grid = document.getElementById('gymsGrid');
-        grid.innerHTML = gyms.map(gym => `
+        
+        if (currentGyms.length === 0) {
+            grid.innerHTML = '<div class="loading">🏋️ Спортзалы не найдены поблизости</div>';
+            return;
+        }
+        
+        grid.innerHTML = currentGyms.map((gym, index) => `
             <div class="gym-card" onclick="focusOnGym(${gym.lat}, ${gym.lng})">
                 <h4><i class="fas fa-dumbbell"></i> ${gym.name}</h4>
                 <p><i class="fas fa-location-dot"></i> ${gym.address}</p>
-                <p><i class="fas fa-subway"></i> ${gym.metro}</p>
-                <p><i class="fas fa-ruble-sign"></i> ${gym.price}</p>
-                <div class="gym-badge"><i class="fas fa-calendar"></i> Круглосуточно</div>
+                <p><i class="fas fa-phone"></i> ${gym.phone}</p>
+                <p><i class="fas fa-clock"></i> ${gym.schedule.substring(0, 100)}${gym.schedule.length > 100 ? '...' : ''}</p>
+                ${gym.rating ? `<div class="gym-badge"><i class="fas fa-star"></i> ${gym.rating}</div>` : ''}
                 <div class="address">
                     <i class="fas fa-map-pin"></i> <a href="https://yandex.ru/maps/?text=${gym.address}" target="_blank">Построить маршрут</a>
                 </div>
@@ -314,7 +373,7 @@
         }
     }
 
-    // Определение местоположения
+    // Определение местоположения и поиск спортзалов
     function getCurrentLocation() {
         const statusDiv = document.getElementById('locationStatus');
         statusDiv.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Определение местоположения...';
@@ -324,20 +383,46 @@
                 (position) => {
                     const lat = position.coords.latitude;
                     const lng = position.coords.longitude;
-                    statusDiv.innerHTML = `<i class="fas fa-check-circle" style="color: #28a745;"></i> Местоположение определено`;
-                    map.setView([lat, lng], 14);
+                    userLocation = { lat, lng };
                     
-                    // Добавляем метку пользователя
-                    DG.marker([lat, lng])
-                        .addTo(map)
-                        .bindPopup('Вы здесь');
+                    statusDiv.innerHTML = `<i class="fas fa-check-circle" style="color: #28a745;"></i> Местоположение определено`;
+                    
+                    if (map) {
+                        map.setView([lat, lng], 14);
+                        // Добавляем метку пользователя
+                        if (window.userMarker) map.removeLayer(window.userMarker);
+                        window.userMarker = DG.marker([lat, lng])
+                            .addTo(map)
+                            .bindPopup('Вы здесь');
+                    }
+                    
+                    searchGymsNearby(lat, lng);
                 },
                 (error) => {
-                    statusDiv.innerHTML = `<i class="fas fa-exclamation-triangle" style="color: #dc3545;"></i> Не удалось определить местоположение. Разрешите доступ к геолокации.`;
+                    let errorMessage = '';
+                    switch(error.code) {
+                        case error.PERMISSION_DENIED:
+                            errorMessage = 'Доступ к геолокации запрещен. Разрешите доступ в настройках браузера.';
+                            break;
+                        case error.POSITION_UNAVAILABLE:
+                            errorMessage = 'Информация о местоположении недоступна.';
+                            break;
+                        case error.TIMEOUT:
+                            errorMessage = 'Время ожидания истекло.';
+                            break;
+                        default:
+                            errorMessage = 'Не удалось определить местоположение.';
+                    }
+                    statusDiv.innerHTML = `<i class="fas fa-exclamation-triangle" style="color: #dc3545;"></i> ${errorMessage}`;
+                    
+                    // Показываем карту Москвы по умолчанию
+                    if (map) {
+                        map.setView([55.7558, 37.6176], 12);
+                    }
                 }
             );
         } else {
-            statusDiv.innerHTML = `<i class="fas fa-exclamation-triangle" style="color: #dc3545;"></i> Геолокация не поддерживается вашим браузером.`;
+            statusDiv.innerHTML = '<i class="fas fa-exclamation-triangle" style="color: #dc3545;"></i> Геолокация не поддерживается вашим браузером.';
         }
     }
 
@@ -353,28 +438,38 @@
                     const point = data.result.items[0].point;
                     const lat = point.lat;
                     const lng = point.lon;
-                    map.setView([lat, lng], 12);
+                    userLocation = { lat, lng };
+                    map.setView([lat, lng], 13);
                     statusDiv.innerHTML = `<i class="fas fa-check-circle" style="color: #28a745;"></i> Найден город: ${city}`;
+                    searchGymsNearby(lat, lng);
                 } else {
                     statusDiv.innerHTML = `<i class="fas fa-exclamation-triangle" style="color: #dc3545;"></i> Город "${city}" не найден`;
                 }
             })
             .catch(() => {
-                statusDiv.innerHTML = `<i class="fas fa-exclamation-triangle" style="color: #dc3545;"></i> Ошибка поиска города. Проверьте подключение к интернету.`;
+                statusDiv.innerHTML = `<i class="fas fa-exclamation-triangle" style="color: #dc3545;"></i> Ошибка поиска города`;
             });
     }
 
     // Сброс карты к начальному положению
     function resetMap() {
-        map.setView([55.7558, 37.6176], 12);
+        if (userLocation) {
+            map.setView([userLocation.lat, userLocation.lng], 14);
+        } else {
+            map.setView([55.7558, 37.6176], 12);
+        }
         document.getElementById('locationStatus').innerHTML = '';
     }
 
     // Обработчики событий
     document.addEventListener('DOMContentLoaded', () => {
         initMap();
+        // Сразу запрашиваем местоположение
+        setTimeout(() => {
+            getCurrentLocation();
+        }, 500);
         
-        document.getElementById('getLocationBtn').addEventListener('click', getCurrentLocation);
+        document.getElementById('refreshLocationBtn').addEventListener('click', getCurrentLocation);
         document.getElementById('searchCityBtn').addEventListener('click', () => {
             const city = document.getElementById('citySearch').value.trim();
             if (city) searchCity(city);
