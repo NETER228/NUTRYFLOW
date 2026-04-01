@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>NutriFlow - Спортзалы</title>
+    <link rel="icon" type="image/png" href="https://bowbokskvpwlpkggswao.supabase.co/storage/v1/object/public/image/favico.png">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Подключение 2ГИС API -->
+    <script src="https://maps.api.2gis.ru/2.0/loader.js?pkg=full"></script>
+    <style>
+        .gyms-hero {
+            text-align: center;
+            padding: 3rem 2rem;
+            background: linear-gradient(135deg, #2a7de1, #6b4eff);
+            color: white;
+        }
+        .gyms-hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: white;
+            background: none;
+        }
+        .gyms-hero p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        .map-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+        .map-card {
+            background: white;
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+        .map-header {
+            padding: 1.5rem;
+            background: #f8fafc;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .map-header h2 {
+            font-size: 1.3rem;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .location-controls {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        .location-btn {
+            background: linear-gradient(135deg, #2a7de1, #1c5eb0);
+            color: white;
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 40px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s;
+        }
+        .location-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(42, 125, 225, 0.3);
+        }
+        .location-btn.outline {
+            background: transparent;
+            border: 1px solid #2a7de1;
+            color: #2a7de1;
+        }
+        .location-btn.outline:hover {
+            background: #2a7de1;
+            color: white;
+        }
+        .search-box {
+            display: flex;
+            gap: 0.5rem;
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 40px;
+            padding: 0.3rem 0.3rem 0.3rem 1rem;
+        }
+        .search-box input {
+            border: none;
+            padding: 0.5rem;
+            width: 200px;
+            font-size: 0.9rem;
+            outline: none;
+        }
+        .search-box button {
+            background: #2a7de1;
+            border: none;
+            border-radius: 40px;
+            padding: 0.5rem 1rem;
+            color: white;
+            cursor: pointer;
+        }
+        #map {
+            width: 100%;
+            height: 500px;
+        }
+        .gyms-list {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+        .gyms-list h3 {
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .gyms-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 1.5rem;
+        }
+        .gym-card {
+            background: white;
+            border-radius: 20px;
+            padding: 1.5rem;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        .gym-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(42, 125, 225, 0.15);
+        }
+        .gym-card h4 {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+            color: #1a1a2e;
+        }
+        .gym-card p {
+            color: #666;
+            font-size: 0.9rem;
+            margin: 0.25rem 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .gym-card .address {
+            color: #2a7de1;
+            font-size: 0.85rem;
+            margin-top: 0.75rem;
+            padding-top: 0.75rem;
+            border-top: 1px solid #eef2f6;
+        }
+        .gym-badge {
+            display: inline-block;
+            background: #e8f0fe;
+            color: #2a7de1;
+            padding: 0.2rem 0.6rem;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            margin-top: 0.5rem;
+        }
+        .location-status {
+            font-size: 0.8rem;
+            color: #666;
+            padding: 0.5rem 1rem;
+        }
+        @media (max-width: 768px) {
+            .map-header {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .search-box {
+                width: 100%;
+            }
+            .search-box input {
+                flex: 1;
+            }
+            #map {
+                height: 400px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div id="header-placeholder"></div>
+
+<section class="gyms-hero">
+    <h1><i class="fas fa-dumbbell"></i> Спортзалы рядом</h1>
+    <p>Найдите лучшие фитнес-клубы и тренажерные залы в вашем городе</p>
+</section>
+
+<div class="map-container">
+    <div class="map-card">
+        <div class="map-header">
+            <h2><i class="fas fa-map-marker-alt"></i> Карта спортзалов</h2>
+            <div class="location-controls">
+                <div class="search-box">
+                    <input type="text" id="citySearch" placeholder="Введите город..." value="Москва">
+                    <button id="searchCityBtn"><i class="fas fa-search"></i></button>
+                </div>
+                <button id="getLocationBtn" class="location-btn"><i class="fas fa-location-dot"></i> Моё местоположение</button>
+                <button id="resetMapBtn" class="location-btn outline"><i class="fas fa-globe"></i> Сброс</button>
+            </div>
+        </div>
+        <div id="map"></div>
+        <div id="locationStatus" class="location-status"></div>
+    </div>
+</div>
+
+<div class="gyms-list">
+    <h3><i class="fas fa-list"></i> Спортзалы поблизости</h3>
+    <div id="gymsGrid" class="gyms-grid">
+        <div class="loading"><i class="fas fa-spinner fa-spin"></i> Загрузка спортзалов...</div>
+    </div>
+</div>
+
+<script>
+    const SUPABASE_URL = 'https://bowbokskvpwlpkggswao.supabase.co';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJvd2Jva3NrdnB3bHBrZ2dzd2FvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM2ODcyODUsImV4cCI6MjA4OTI2MzI4NX0.s3GrEoE84ECDdH6wlX7ECfh2itVfL4w4o8DdqL4LFoA';
+
+    const currentUser = JSON.parse(sessionStorage.getItem('currentUser'));
+    if (!currentUser) window.location.href = 'index.html';
+
+    // ========== ВАШ API-КЛЮЧ 2ГИС (вставьте сюда) ==========
+    const DG_API_KEY = '2e0fda04-8be1-4dc5-8d08-eb825936fff9';  // ← СЮДА ВСТАВЬТЕ КЛЮЧ
+
+    // Список спортзалов (координаты для Москвы)
+    const gyms = [
+        { name: "World Class", address: "ул. Тверская, 15", lat: 55.7558, lng: 37.6176, metro: "Тверская", price: "от 5000 ₽/мес" },
+        { name: "X-Fit", address: "Кутузовский пр-т, 36", lat: 55.7394, lng: 37.5355, metro: "Кутузовская", price: "от 4500 ₽/мес" },
+        { name: "Orange Fitness", address: "ул. Большая Дмитровка, 23", lat: 55.7645, lng: 37.6092, metro: "Пушкинская", price: "от 4000 ₽/мес" },
+        { name: "FitCurves", address: "Ленинградский пр-т, 47", lat: 55.7902, lng: 37.5577, metro: "Динамо", price: "от 3500 ₽/мес" },
+        { name: "Zebra Gym", address: "ул. Арбат, 20", lat: 55.7512, lng: 37.5893, metro: "Арбатская", price: "от 3000 ₽/мес" },
+        { name: "Gym Fitness", address: "Проспект Мира, 49", lat: 55.7783, lng: 37.6295, metro: "Проспект Мира", price: "от 2500 ₽/мес" },
+        { name: "SportLand", address: "ул. Новый Арбат, 15", lat: 55.7534, lng: 37.5858, metro: "Арбатская", price: "от 3800 ₽/мес" },
+        { name: "Power House", address: "ул. Пятницкая, 38", lat: 55.7412, lng: 37.6243, metro: "Новокузнецкая", price: "от 4200 ₽/мес" }
+    ];
+
+    let map;
+    let markers = [];
+
+    // Инициализация карты
+    function initMap(centerLat = 55.7558, centerLng = 37.6176, zoom = 12) {
+        if (map) return;
+        
+        DG.then(() => {
+            map = DG.map('map', {
+                center: [centerLat, centerLng],
+                zoom: zoom,
+                key: DG_API_KEY
+            });
+            
+            loadMarkers();
+        });
+    }
+
+    // Загрузка маркеров на карту
+    function loadMarkers() {
+        if (!map) return;
+        
+        // Удаляем старые маркеры
+        markers.forEach(m => map.removeLayer(m));
+        markers = [];
+        
+        // Добавляем новые маркеры
+        gyms.forEach(gym => {
+            const marker = DG.marker([gym.lat, gym.lng])
+                .addTo(map)
+                .bindPopup(`
+                    <b>${gym.name}</b><br>
+                    📍 ${gym.address}<br>
+                    🚇 ${gym.metro}<br>
+                    💰 ${gym.price}<br>
+                    <a href="https://yandex.ru/maps/?text=${gym.address}" target="_blank">Построить маршрут</a>
+                `);
+            markers.push(marker);
+        });
+        
+        renderGymsList();
+    }
+
+    // Отображение списка спортзалов
+    function renderGymsList() {
+        const grid = document.getElementById('gymsGrid');
+        grid.innerHTML = gyms.map(gym => `
+            <div class="gym-card" onclick="focusOnGym(${gym.lat}, ${gym.lng})">
+                <h4><i class="fas fa-dumbbell"></i> ${gym.name}</h4>
+                <p><i class="fas fa-location-dot"></i> ${gym.address}</p>
+                <p><i class="fas fa-subway"></i> ${gym.metro}</p>
+                <p><i class="fas fa-ruble-sign"></i> ${gym.price}</p>
+                <div class="gym-badge"><i class="fas fa-calendar"></i> Круглосуточно</div>
+                <div class="address">
+                    <i class="fas fa-map-pin"></i> <a href="https://yandex.ru/maps/?text=${gym.address}" target="_blank">Построить маршрут</a>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    // Фокусировка на спортзале
+    function focusOnGym(lat, lng) {
+        if (map) {
+            map.setView([lat, lng], 16);
+        }
+    }
+
+    // Определение местоположения
+    function getCurrentLocation() {
+        const statusDiv = document.getElementById('locationStatus');
+        statusDiv.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Определение местоположения...';
+        
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    const lat = position.coords.latitude;
+                    const lng = position.coords.longitude;
+                    statusDiv.innerHTML = `<i class="fas fa-check-circle" style="color: #28a745;"></i> Местоположение определено`;
+                    map.setView([lat, lng], 14);
+                    
+                    // Добавляем метку пользователя
+                    DG.marker([lat, lng])
+                        .addTo(map)
+                        .bindPopup('Вы здесь');
+                },
+                (error) => {
+                    statusDiv.innerHTML = `<i class="fas fa-exclamation-triangle" style="color: #dc3545;"></i> Не удалось определить местоположение. Разрешите доступ к геолокации.`;
+                }
+            );
+        } else {
+            statusDiv.innerHTML = `<i class="fas fa-exclamation-triangle" style="color: #dc3545;"></i> Геолокация не поддерживается вашим браузером.`;
+        }
+    }
+
+    // Поиск города через геокодер 2ГИС
+    function searchCity(city) {
+        const statusDiv = document.getElementById('locationStatus');
+        statusDiv.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Поиск города...';
+        
+        fetch(`https://catalog.api.2gis.ru/3.0/items/geocode?q=${encodeURIComponent(city)}&key=${DG_API_KEY}`)
+            .then(res => res.json())
+            .then(data => {
+                if (data.result && data.result.items && data.result.items.length > 0) {
+                    const point = data.result.items[0].point;
+                    const lat = point.lat;
+                    const lng = point.lon;
+                    map.setView([lat, lng], 12);
+                    statusDiv.innerHTML = `<i class="fas fa-check-circle" style="color: #28a745;"></i> Найден город: ${city}`;
+                } else {
+                    statusDiv.innerHTML = `<i class="fas fa-exclamation-triangle" style="color: #dc3545;"></i> Город "${city}" не найден`;
+                }
+            })
+            .catch(() => {
+                statusDiv.innerHTML = `<i class="fas fa-exclamation-triangle" style="color: #dc3545;"></i> Ошибка поиска города. Проверьте подключение к интернету.`;
+            });
+    }
+
+    // Сброс карты к начальному положению
+    function resetMap() {
+        map.setView([55.7558, 37.6176], 12);
+        document.getElementById('locationStatus').innerHTML = '';
+    }
+
+    // Обработчики событий
+    document.addEventListener('DOMContentLoaded', () => {
+        initMap();
+        
+        document.getElementById('getLocationBtn').addEventListener('click', getCurrentLocation);
+        document.getElementById('searchCityBtn').addEventListener('click', () => {
+            const city = document.getElementById('citySearch').value.trim();
+            if (city) searchCity(city);
+        });
+        document.getElementById('resetMapBtn').addEventListener('click', resetMap);
+        document.getElementById('citySearch').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                const city = document.getElementById('citySearch').value.trim();
+                if (city) searchCity(city);
+            }
+        });
+    });
+    
+    // Делаем функцию глобальной для вызова из onclick
+    window.focusOnGym = focusOnGym;
+</script>
+<script src="load-header.js"></script>
+<script src="load-footer.js"></script>
+</body>
+</html>

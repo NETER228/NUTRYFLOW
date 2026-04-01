@@ -73,6 +73,26 @@ function setupContactsScroll() {
     }
 }
 
+function setupNavigation() {
+    const currentPage = window.location.pathname.split('/').pop() || 'index-auth.html';
+    
+    const pageMapping = {
+        'index-auth.html': 'navHome',
+        'profile.html': 'navProfile',
+        'marathons.html': 'navMarathons',
+        'gyms.html': 'navGyms',
+        'supplements.html': 'navSupplements',
+        'dashboard.html': 'navSupplements',
+        'marathon-detail.html': 'navMarathons'
+    };
+    
+    const currentNavId = pageMapping[currentPage];
+    if (currentNavId) {
+        const currentLink = document.getElementById(currentNavId);
+        if (currentLink) currentLink.style.display = 'none';
+    }
+}
+
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', loadHeader);
 } else {
