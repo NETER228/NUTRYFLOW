@@ -1,19 +1,15 @@
 // Загрузка шапки
 async function loadHeader() {
     try {
-        // Проверяем, не загружена ли уже шапка
-        if (document.querySelector('header')) {
-            return;
-        }
+        if (document.querySelector('header')) return;
         
         const response = await fetch('header.html');
-        const headerHtml = await response.text();
+        let headerHtml = await response.text();
         const headerPlaceholder = document.getElementById('header-placeholder');
         
         if (headerPlaceholder) {
             headerPlaceholder.innerHTML = headerHtml;
         } else {
-            // Если нет placeholder, создаем в начале body
             const tempDiv = document.createElement('div');
             tempDiv.innerHTML = headerHtml;
             const headerElement = tempDiv.firstElementChild;
@@ -22,23 +18,24 @@ async function loadHeader() {
             }
         }
         
-        // Настраиваем навигацию и кнопки после загрузки
         setTimeout(() => {
             setupNavigation();
             setupLogout();
             setupContactsScroll();
-        }, 50);
+            // Переинициализируем кнопки темы после загрузки шапки
+            if (typeof window.refreshThemeButtons === 'function') {
+                window.refreshThemeButtons();
+            }
+        }, 100);
         
     } catch (error) {
         console.error('Ошибка загрузки шапки:', error);
     }
 }
 
-// Скрытие ссылки на текущую страницу в навигации
 function setupNavigation() {
     const currentPage = window.location.pathname.split('/').pop() || 'index-auth.html';
     
-    // Маппинг страниц
     const pageMapping = {
         'index-auth.html': 'navHome',
         'profile.html': 'navProfile',
@@ -49,50 +46,38 @@ function setupNavigation() {
         'marathon-detail.html': 'navMarathons'
     };
     
-    // Скрываем ссылку на текущую страницу
     const currentNavId = pageMapping[currentPage];
     if (currentNavId) {
         const currentLink = document.getElementById(currentNavId);
-        if (currentLink) {
-            currentLink.style.display = 'none';
-        }
+        if (currentLink) currentLink.style.display = 'none';
     }
 }
 
-// Настройка кнопки выхода
 function setupLogout() {
     const logoutBtn = document.getElementById('logoutBtn');
     if (logoutBtn) {
-        // Удаляем старые обработчики, чтобы не дублировать
         const newLogoutBtn = logoutBtn.cloneNode(true);
         logoutBtn.parentNode.replaceChild(newLogoutBtn, logoutBtn);
-        
-        newLogoutBtn.addEventListener('click', function() {
+        newLogoutBtn.addEventListener('click', () => {
             sessionStorage.removeItem('currentUser');
             window.location.href = 'index.html';
         });
     }
 }
 
-// Настройка прокрутки к контактам
 function setupContactsScroll() {
     const contactsLink = document.getElementById('contactsLink');
     if (contactsLink) {
-        // Удаляем старые обработчики
         const newContactsLink = contactsLink.cloneNode(true);
         contactsLink.parentNode.replaceChild(newContactsLink, contactsLink);
-        
-        newContactsLink.addEventListener('click', function(e) {
+        newContactsLink.addEventListener('click', (e) => {
             e.preventDefault();
             const footer = document.querySelector('footer');
-            if (footer) {
-                footer.scrollIntoView({ behavior: 'smooth' });
-            }
+            if (footer) footer.scrollIntoView({ behavior: 'smooth' });
         });
     }
 }
 
-// Загрузка шапки при загрузке страницы
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', loadHeader);
 } else {

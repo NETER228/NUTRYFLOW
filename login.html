@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>NutriFlow - Вход</title>
     <link rel="icon" type="image/png" href="https://bowbokskvpwlpkggswao.supabase.co/storage/v1/object/public/image/favico.png">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css" id="themeStylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
@@ -13,6 +13,9 @@
             <img src="https://bowbokskvpwlpkggswao.supabase.co/storage/v1/object/public/image/LOGO2.png" alt="NutriFlow">
         </div>
         <nav>
+            <button class="btn theme-toggle" id="themeToggleBtn">
+                <i class="fas fa-moon"></i>
+            </button>
             <button class="btn btn-outline" onclick="location.href='index.html'"><i class="fas fa-home"></i> Главная</button>
         </nav>
     </header>
@@ -134,6 +137,46 @@
         const SUPABASE_URL = 'https://bowbokskvpwlpkggswao.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJvd2Jva3NrdnB3bHBrZ2dzd2FvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM2ODcyODUsImV4cCI6MjA4OTI2MzI4NX0.s3GrEoE84ECDdH6wlX7ECfh2itVfL4w4o8DdqL4LFoA';
 
+        function setTheme(theme) {
+            const isDark = theme === 'dark';
+            const themeFile = isDark ? DARK_THEME : LIGHT_THEME;
+            const themeLink = document.getElementById('themeStylesheet');
+            if (themeLink) {
+                themeLink.href = themeFile;
+            }
+            localStorage.setItem(THEME_KEY, theme);
+            
+            const themeBtn = document.getElementById('themeToggleBtn');
+            if (themeBtn) {
+                if (isDark) {
+                    themeBtn.innerHTML = '<i class="fas fa-sun"></i>';
+                } else {
+                    themeBtn.innerHTML = '<i class="fas fa-moon"></i>';
+                }
+            }
+            
+            if (isDark) {
+                document.body.setAttribute('data-theme', 'dark');
+            } else {
+                document.body.removeAttribute('data-theme');
+            }
+        }
+
+        function toggleTheme() {
+            const currentTheme = localStorage.getItem(THEME_KEY) || 'light';
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            setTheme(newTheme);
+        }
+
+        function initTheme() {
+            let savedTheme = localStorage.getItem(THEME_KEY);
+            if (!savedTheme) {
+                const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                savedTheme = prefersDark ? 'dark' : 'light';
+            }
+            setTheme(savedTheme);
+        }
+
         // Вспомогательные функции
         function hashPassword(password) {
             let hash = 0;
@@ -183,7 +226,6 @@
             const termsCheckbox = document.getElementById('termsAgree');
             const registerBtn = document.getElementById('registerBtn');
 
-            // Открытие модального окна
             if (termsLink) {
                 termsLink.addEventListener('click', function(e) {
                     e.preventDefault();
@@ -191,14 +233,12 @@
                 });
             }
 
-            // Закрытие крестиком
             closeBtns.forEach(btn => {
                 btn.addEventListener('click', function() {
                     modal.classList.remove('show');
                 });
             });
 
-            // Принять условия
             if (acceptBtn) {
                 acceptBtn.addEventListener('click', function() {
                     termsCheckbox.checked = true;
@@ -207,7 +247,6 @@
                 });
             }
 
-            // Отказаться
             if (declineBtn) {
                 declineBtn.addEventListener('click', function() {
                     termsCheckbox.checked = false;
@@ -216,14 +255,12 @@
                 });
             }
 
-            // Закрытие при клике вне окна
             window.addEventListener('click', function(e) {
                 if (e.target === modal) {
                     modal.classList.remove('show');
                 }
             });
 
-            // Чекбокс
             if (termsCheckbox) {
                 termsCheckbox.addEventListener('change', function() {
                     registerBtn.disabled = !this.checked;
@@ -250,14 +287,12 @@
             hideAlert('registerAlert');
             
             try {
-                // Проверка на существующий email
                 const existing = await supabaseRequest(`users?email=eq.${encodeURIComponent(email)}`);
                 if (existing?.length) {
                     showAlert('registerAlert', 'Этот email уже зарегистрирован');
                     return;
                 }
                 
-                // Создание пользователя
                 const userResult = await supabaseRequest('users', {
                     method: 'POST',
                     body: JSON.stringify({
@@ -275,7 +310,6 @@
                     userId = findUser?.[0]?.id;
                 }
                 
-                // Создание профиля
                 await supabaseRequest('user_profiles', {
                     method: 'POST',
                     body: JSON.stringify({
@@ -353,7 +387,13 @@
 
         // ========== ИНИЦИАЛИЗАЦИЯ ==========
         document.addEventListener('DOMContentLoaded', function() {
+            initTheme();
             setupTermsModal();
+            
+            const themeBtn = document.getElementById('themeToggleBtn');
+            if (themeBtn) {
+                themeBtn.addEventListener('click', toggleTheme);
+            }
             
             const registerForm = document.getElementById('registerForm');
             const loginForm = document.getElementById('loginForm');
@@ -362,5 +402,57 @@
             if (loginForm) loginForm.addEventListener('submit', loginUser);
         });
     </script>
+    <script>
+    const LIGHT_THEME = 'style.css';
+    const DARK_THEME = 'style-black.css';
+    const THEME_KEY = 'nutriflow_theme';
+
+    function setTheme(theme) {
+        const isDark = theme === 'dark';
+        const themeFile = isDark ? DARK_THEME : LIGHT_THEME;
+        const themeLink = document.getElementById('themeStylesheet');
+        if (themeLink) {
+            themeLink.href = themeFile;
+        }
+        localStorage.setItem(THEME_KEY, theme);
+        
+        const themeBtn = document.getElementById('themeToggleBtn');
+        if (themeBtn) {
+            if (isDark) {
+                themeBtn.innerHTML = '<i class="fas fa-sun"></i>';
+            } else {
+                themeBtn.innerHTML = '<i class="fas fa-moon"></i>';
+            }
+        }
+        
+        if (isDark) {
+            document.body.setAttribute('data-theme', 'dark');
+        } else {
+            document.body.removeAttribute('data-theme');
+        }
+    }
+
+    function toggleTheme() {
+        const currentTheme = localStorage.getItem(THEME_KEY) || 'light';
+        const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+        setTheme(newTheme);
+    }
+
+    function initTheme() {
+        let savedTheme = localStorage.getItem(THEME_KEY);
+        if (!savedTheme) {
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            savedTheme = prefersDark ? 'dark' : 'light';
+        }
+        setTheme(savedTheme);
+        
+        const themeBtn = document.getElementById('themeToggleBtn');
+        if (themeBtn) {
+            themeBtn.addEventListener('click', toggleTheme);
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', initTheme);
+</script>
 </body>
 </html>
