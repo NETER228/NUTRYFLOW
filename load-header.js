@@ -37,6 +37,7 @@ function setupNavigation() {
     const currentPage = window.location.pathname.split('/').pop() || 'index-auth.html';
     
     const pageMapping = {
+        'calculators.html': 'navCalculators',
         'index-auth.html': 'navHome',
         'profile.html': 'navProfile',
         'marathons.html': 'navMarathons',
