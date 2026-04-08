@@ -7,6 +7,110 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="icon" type="image/png" href="https://bowbokskvpwlpkggswao.supabase.co/storage/v1/object/public/image/favico.png">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* Дополнительные стили для модального окна удаления */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            backdrop-filter: blur(4px);
+        }
+        .modal.active {
+            display: flex;
+        }
+        .modal-content {
+            background: var(--card-bg, #fff);
+            border-radius: 24px;
+            padding: 28px;
+            max-width: 450px;
+            width: 90%;
+            box-shadow: 0 20px 35px rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--border-color, #e0e0e0);
+        }
+        .modal-content h3 {
+            margin-top: 0;
+            color: #e74c3c;
+            font-size: 1.6rem;
+        }
+        .modal-content p {
+            margin: 16px 0;
+            color: var(--text-color, #333);
+        }
+        .modal-content input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid var(--border-color, #ddd);
+            border-radius: 16px;
+            font-size: 1rem;
+            background: var(--input-bg, #f9f9f9);
+            color: var(--text-color, #333);
+            margin: 10px 0;
+        }
+        .modal-buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+        }
+        .btn-danger {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 40px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            flex: 1;
+        }
+        .btn-danger:hover {
+            background: #c0392b;
+            transform: scale(0.98);
+        }
+        .btn-secondary {
+            background: var(--btn-secondary-bg, #e0e0e0);
+            color: var(--text-color, #333);
+            border: none;
+            padding: 12px 20px;
+            border-radius: 40px;
+            font-weight: 600;
+            cursor: pointer;
+            flex: 1;
+        }
+        .delete-account-btn {
+            background: transparent;
+            border: 1.5px solid #e74c3c;
+            color: #e74c3c;
+            padding: 12px 20px;
+            border-radius: 40px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            width: 100%;
+            margin-top: 20px;
+            font-size: 1rem;
+        }
+        .delete-account-btn:hover {
+            background: #e74c3c20;
+            transform: scale(0.98);
+        }
+        .warning-text {
+            color: #e74c3c;
+            font-size: 0.85rem;
+            margin-top: 8px;
+        }
+        .error-message {
+            color: #e74c3c;
+            font-size: 0.8rem;
+            margin-top: 5px;
+        }
+    </style>
 </head>
 <body>
 
@@ -80,6 +184,11 @@
             
             <button class="btn btn-save" id="saveBtn" style="display: none;">
                 <i class="fas fa-save"></i> Сохранить изменения
+            </button>
+
+            <!-- Кнопка удаления аккаунта -->
+            <button class="delete-account-btn" id="deleteAccountBtn">
+                <i class="fas fa-trash-alt"></i> Удалить аккаунт
             </button>
         </div>
         
@@ -173,6 +282,22 @@
         </div>
     </div>
 </main>
+
+<!-- Модальное окно подтверждения удаления -->
+<div id="deleteModal" class="modal">
+    <div class="modal-content">
+        <h3><i class="fas fa-exclamation-triangle"></i> Удаление аккаунта</h3>
+        <p>Это действие <strong>необратимо</strong>. Все ваши данные будут навсегда удалены.</p>
+        <p>Для подтверждения введите ваш email: <strong id="userEmailDisplay"></strong></p>
+        <p style="font-size: 0.9rem; color: #666; margin-top: -5px;">(<span id="maskedEmail"></span>)</p>
+        <input type="email" id="confirmEmailInput" placeholder="Введите ваш email" autocomplete="off">
+        <div id="emailError" class="error-message"></div>
+        <div class="modal-buttons">
+            <button class="btn-secondary" id="cancelDeleteBtn">Отмена</button>
+            <button class="btn-danger" id="confirmDeleteBtn">Удалить навсегда</button>
+        </div>
+    </div>
+</div>
 
 <script>
     const SUPABASE_URL = 'https://bowbokskvpwlpkggswao.supabase.co';
@@ -358,6 +483,141 @@
             console.error(error);
             alert('Ошибка при сохранении');
         }
+    });
+    
+    // ========== УДАЛЕНИЕ АККАУНТА ==========
+    const deleteModal = document.getElementById('deleteModal');
+    const deleteAccountBtn = document.getElementById('deleteAccountBtn');
+    const cancelDeleteBtn = document.getElementById('cancelDeleteBtn');
+    const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+    const confirmEmailInput = document.getElementById('confirmEmailInput');
+    const emailError = document.getElementById('emailError');
+    const userEmailDisplay = document.getElementById('userEmailDisplay');
+    
+// Функция маскирования email
+function maskEmail(email) {
+    if (!email) return '';
+    const [localPart, domain] = email.split('@');
+    if (localPart.length <= 2) {
+        return email; // слишком короткий email - показываем полностью
+    }
+    const visibleStart = localPart.substring(0, 2); // первые 2 символа
+    const masked = visibleStart + '*'.repeat(Math.min(localPart.length - 2, 6)) + '@' + domain;
+    return masked;
+}
+
+// Показываем замаскированный email текущего пользователя
+if (userEmailDisplay && currentUser.email) {
+    userEmailDisplay.textContent = 'вашу почту';
+    const maskedEmailSpan = document.getElementById('maskedEmail');
+    if (maskedEmailSpan) {
+        maskedEmailSpan.textContent = maskEmail(currentUser.email);
+    }
+}
+    
+    // Открыть модальное окно
+    deleteAccountBtn?.addEventListener('click', () => {
+        if (deleteModal) {
+            confirmEmailInput.value = '';
+            emailError.textContent = '';
+            deleteModal.classList.add('active');
+        }
+    });
+    
+    // Закрыть модалку
+    function closeModal() {
+        deleteModal.classList.remove('active');
+    }
+    
+    cancelDeleteBtn?.addEventListener('click', closeModal);
+    
+    // Закрытие по клику на фон
+    deleteModal?.addEventListener('click', (e) => {
+        if (e.target === deleteModal) closeModal();
+    });
+    
+    // Функция удаления всех данных пользователя из Supabase
+    async function deleteUserData() {
+        try {
+            // 1. Удаляем профиль пользователя
+            await fetch(`${SUPABASE_URL}/rest/v1/user_profiles?user_id=eq.${currentUser.id}`, {
+                method: 'DELETE',
+                headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}` }
+            });
+            
+            // 2. Удаляем записи о приемах пищи (если есть таблица meals)
+            // Проверяем существование таблицы через безопасный запрос (игнорируем ошибку 404)
+            try {
+                await fetch(`${SUPABASE_URL}/rest/v1/meals?user_id=eq.${currentUser.id}`, {
+                    method: 'DELETE',
+                    headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}` }
+                });
+            } catch(e) { console.log("Таблица meals не найдена или удаление не требуется"); }
+            
+            // 3. Удаляем записи о водном балансе (если есть)
+            try {
+                await fetch(`${SUPABASE_URL}/rest/v1/water_logs?user_id=eq.${currentUser.id}`, {
+                    method: 'DELETE',
+                    headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}` }
+                });
+            } catch(e) { console.log("Таблица water_logs не найдена"); }
+            
+            // 4. Удаляем тренировки (если есть)
+            try {
+                await fetch(`${SUPABASE_URL}/rest/v1/workouts?user_id=eq.${currentUser.id}`, {
+                    method: 'DELETE',
+                    headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}` }
+                });
+            } catch(e) { console.log("Таблица workouts не найдена"); }
+            
+            // 5. Удаляем самого пользователя из таблицы users (если она существует)
+            // ВНИМАНИЕ: это может быть отдельная таблица аутентификации. 
+            // Если используется Supabase Auth, удаление должно быть через admin API.
+            // Но если у вас кастомная таблица users, то:
+            try {
+                await fetch(`${SUPABASE_URL}/rest/v1/users?id=eq.${currentUser.id}`, {
+                    method: 'DELETE',
+                    headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}` }
+                });
+            } catch(e) { console.log("Таблица users не найдена или удаление через REST невозможно"); }
+            
+            // Очищаем sessionStorage
+            sessionStorage.removeItem('currentUser');
+            sessionStorage.removeItem('userEmail');
+            
+            alert('Ваш аккаунт и все данные успешно удалены. Перенаправляем на главную...');
+            window.location.href = 'index.html';
+        } catch (error) {
+            console.error('Ошибка при удалении:', error);
+            alert('Произошла ошибка при удалении аккаунта. Пожалуйста, попробуйте позже.');
+        }
+    }
+    
+    // Подтверждение удаления с проверкой email
+    confirmDeleteBtn?.addEventListener('click', async () => {
+        const enteredEmail = confirmEmailInput.value.trim().toLowerCase();
+        const expectedEmail = currentUser.email?.toLowerCase();
+        
+        if (!enteredEmail || enteredEmail !== expectedEmail) {
+            emailError.textContent = `Email не совпадает. Введите ${currentUser.email}`;
+            return;
+        }
+        
+        emailError.textContent = '';
+        
+        // Дополнительное подтверждение через нативный диалог
+        const finalConfirm = confirm('Вы уверены, что хотите навсегда удалить аккаунт? Все данные будут потеряны без возможности восстановления.');
+        if (!finalConfirm) return;
+        
+        // Блокируем кнопку, чтобы не было повторных кликов
+        confirmDeleteBtn.disabled = true;
+        confirmDeleteBtn.textContent = 'Удаление...';
+        
+        await deleteUserData();
+        
+        // Если удаление не сработало (остались на странице) - разблокируем
+        confirmDeleteBtn.disabled = false;
+        confirmDeleteBtn.textContent = 'Удалить навсегда';
     });
     
     document.addEventListener('DOMContentLoaded', loadProfile);

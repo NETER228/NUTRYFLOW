@@ -74,7 +74,6 @@
             from { opacity: 0; }
             to { opacity: 1; }
         }
-        
         .inputs-panel {
             background: #ffffff;
             border-radius: 20px;
@@ -90,25 +89,9 @@
             font-size: 1rem;
             margin-bottom: 1rem;
             color: #1e293b;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            flex-wrap: wrap;
-            justify-content: space-between;
         }
         body[data-theme="dark"] .inputs-panel h3 {
             color: #e2e8f0;
-        }
-        .profile-badge {
-            font-size: 0.7rem;
-            background: #e0f2fe;
-            padding: 0.2rem 0.6rem;
-            border-radius: 20px;
-            color: #0284c7;
-        }
-        body[data-theme="dark"] .profile-badge {
-            background: rgba(108, 92, 231, 0.2);
-            color: #8b7ef0;
         }
         .inputs-grid {
             display: grid;
@@ -140,7 +123,6 @@
             border-color: #3a3a50;
             color: #e2e8f0;
         }
-        
         .formulas-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
@@ -223,7 +205,6 @@
         body[data-theme="dark"] .formula-how strong {
             color: #8b7ef0;
         }
-        
         .total-result {
             background: linear-gradient(135deg, #2a7de1, #6b4eff);
             border-radius: 20px;
@@ -243,7 +224,6 @@
             font-size: 2rem;
             font-weight: 700;
         }
-        
         .fat-level {
             display: inline-block;
             padding: 0.15rem 0.5rem;
@@ -256,13 +236,11 @@
         .fat-level.fitness { background: #10b98120; color: #10b981; }
         .fat-level.acceptable { background: #3b82f620; color: #3b82f6; }
         .fat-level.obese { background: #ef444420; color: #ef4444; }
-        
         .loading-overlay {
             text-align: center;
             padding: 2rem;
             color: #64748b;
         }
-        
         @media (max-width: 700px) {
             .formulas-grid {
                 grid-template-columns: 1fr;
@@ -279,26 +257,29 @@
 
 <section class="calculators-hero">
     <h1><i class="fas fa-calculator"></i> Фитнес-калькуляторы</h1>
-    <p>Ваши данные из профиля подставлены автоматически — просто смотрите результат</p>
+    <p>Введите свои данные — результат появится сразу</p>
 </section>
 
 <div class="calculators-container" id="calculatorsContainer">
     <div class="loading-overlay">
-        <i class="fas fa-spinner fa-spin"></i> Загрузка ваших данных...
+        <i class="fas fa-spinner fa-spin"></i> Загрузка...
     </div>
 </div>
+
+<script src="calculators-core.js"></script>
+<script src="theme-switcher.js"></script>
+<script src="load-header.js"></script>
+<script src="load-footer.js"></script>
 
 <script>
     const SUPABASE_URL = 'https://bowbokskvpwlpkggswao.supabase.co';
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJvd2Jva3NrdnB3bHBrZ2dzd2FvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM2ODcyODUsImV4cCI6MjA4OTI2MzI4NX0.s3GrEoE84ECDdH6wlX7ECfh2itVfL4w4o8DdqL4LFoA';
 
-    // Проверка авторизации
     const currentUser = JSON.parse(sessionStorage.getItem('currentUser'));
     if (!currentUser) window.location.href = 'index.html';
 
     let userProfile = null;
 
-    // Загрузка профиля из Supabase
     async function loadUserProfile() {
         try {
             const response = await fetch(`${SUPABASE_URL}/rest/v1/user_profiles?user_id=eq.${currentUser.id}&select=*`, {
@@ -310,52 +291,42 @@
             const data = await response.json();
             if (data && data.length > 0) {
                 userProfile = data[0];
-                // Сохраняем в currentUser для других страниц
                 currentUser.profile = userProfile;
                 sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
             }
             renderCalculators();
         } catch (error) {
             console.error('Ошибка загрузки профиля:', error);
-            renderCalculators(); // Рендерим с пустыми значениями
+            renderCalculators();
         }
     }
 
-    // Вычисление возраста из года рождения
     function calculateAge(birthYear) {
         if (!birthYear) return null;
         return new Date().getFullYear() - birthYear;
     }
 
-    // Рендер всей страницы с подставленными данными
     function renderCalculators() {
         const container = document.getElementById('calculatorsContainer');
         
-        // Получаем значения из профиля или используем значения по умолчанию
         const gender = userProfile?.gender || 'male';
         const weight = userProfile?.weight || 70;
         const height = userProfile?.height || 170;
         const birthYear = userProfile?.birth_year;
         const age = calculateAge(birthYear) || 30;
         
-        // Для отображения в интерфейсе
-        const genderText = gender === 'male' ? 'Мужчина' : 'Женщина';
-        
         container.innerHTML = `
             <div class="calculator-tabs">
-                <button class="tab-btn active" data-tab="water">💧 Вода</button>
-                <button class="tab-btn" data-tab="onerm">🏋️ 1 ПМ</button>
-                <button class="tab-btn" data-tab="fat">📊 Процент жира</button>
-                <button class="tab-btn" data-tab="ideal">⚖️ Идеальный вес</button>
+                <button class="tab-btn active" data-tab="water">Вода</button>
+                <button class="tab-btn" data-tab="onerm">1 ПМ</button>
+                <button class="tab-btn" data-tab="fat">Процент жира</button>
+                <button class="tab-btn" data-tab="ideal">Идеальный вес</button>
             </div>
 
-            <!-- ==================== КАЛЬКУЛЯТОР ВОДЫ ==================== -->
+            <!-- ВОДА -->
             <div class="tab-pane active" id="tab-water">
                 <div class="inputs-panel">
-                    <h3>
-                        <span><i class="fas fa-sliders-h"></i> Ваши параметры</span>
-                        <span class="profile-badge"><i class="fas fa-user-check"></i> Данные из профиля</span>
-                    </h3>
+                    <h3><i class="fas fa-sliders-h"></i> Ваши параметры</h3>
                     <div class="inputs-grid">
                         <div class="input-field">
                             <label><i class="fas fa-weight-hanging"></i> Вес (кг)</label>
@@ -392,50 +363,46 @@
                         <div class="formula-result" id="waterBase">-- л</div>
                         <div class="formula-desc">Сколько воды нужно просто для жизни, без учёта тренировок.</div>
                         <div class="formula-how">
-                            <strong>🧠 Как считаем:</strong> На каждый килограмм веса — 35 мл воды.<br>
-                            📌 <em>Пример:</em> ${weight} кг × 35 мл = ${Math.round(weight * 35)} мл = <strong>${(weight * 0.035).toFixed(1)} литра</strong>
+                            <strong>Как считаем:</strong> На каждый килограмм веса — 35 мл воды.<br>
+                            <em>Пример:</em> ${weight} кг × 35 мл = ${Math.round(weight * 35)} мл = ${(weight * 0.035).toFixed(1)} литра
                         </div>
                     </div>
                     
                     <div class="formula-card">
                         <div class="formula-header">
-                            <span class="formula-icon">🏃‍♂️</span>
-                            <span class="formula-name">➕ На тренировки</span>
+                            <span class="formula-icon">🏃</span>
+                            <span class="formula-name">На тренировки</span>
                         </div>
                         <div class="formula-result" id="waterTrainingResult">-- л</div>
                         <div class="formula-desc">Дополнительная вода из-за пота во время физической нагрузки.</div>
                         <div class="formula-how">
-                            <strong>🧠 Как считаем:</strong> За каждый час тренировки теряется около 750 мл воды.<br>
-                            📌 <em>Пример:</em> 30 минут бега = 375 мл. Добавляем к базовой норме.
+                            <strong>Как считаем:</strong> За каждый час тренировки теряется около 750 мл воды.
                         </div>
                     </div>
                     
                     <div class="formula-card">
                         <div class="formula-header">
                             <span class="formula-icon">☀️</span>
-                            <span class="formula-name">➕ Жара и особые состояния</span>
+                            <span class="formula-name">Жара и особые состояния</span>
                         </div>
                         <div class="formula-result" id="waterExtra">-- л</div>
                         <div class="formula-desc">Добавка на жару, беременность или кормление грудью.</div>
                         <div class="formula-how">
-                            <strong>🧠 Как считаем:</strong> В жару — +500 мл. При беременности — +700 мл. При кормлении — +1000 мл.
+                            <strong>Как считаем:</strong> В жару — +500 мл. При беременности — +700 мл. При кормлении — +1000 мл.
                         </div>
                     </div>
                 </div>
                 
                 <div class="total-result">
-                    <div class="label">💧 ВСЕГО НУЖНО ВЫПИВАТЬ В ДЕНЬ</div>
+                    <div class="label">ВСЕГО НУЖНО ВЫПИВАТЬ В ДЕНЬ</div>
                     <div class="value" id="waterTotal">-- л</div>
                 </div>
             </div>
 
-            <!-- ==================== КАЛЬКУЛЯТОР 1 ПМ ==================== -->
+            <!-- 1 ПМ -->
             <div class="tab-pane" id="tab-onerm">
                 <div class="inputs-panel">
-                    <h3>
-                        <span><i class="fas fa-sliders-h"></i> Ваши параметры</span>
-                        <span class="profile-badge"><i class="fas fa-user-check"></i> Данные из профиля</span>
-                    </h3>
+                    <h3><i class="fas fa-sliders-h"></i> Ваши параметры</h3>
                     <div class="inputs-grid">
                         <div class="input-field">
                             <label><i class="fas fa-weight-hanging"></i> Вес штанги (кг)</label>
@@ -452,65 +419,47 @@
                     <div class="formula-card">
                         <div class="formula-header">
                             <span class="formula-icon">📐</span>
-                            <span class="formula-name">Бжицки (самая точная)</span>
+                            <span class="formula-name">Формула Бжицки</span>
                         </div>
                         <div class="formula-result" id="1rmBrzycki">-- кг</div>
-                        <div class="formula-desc">Лучше всего работает для 3-10 повторений.</div>
-                        <div class="formula-how">
-                            <strong>🧠 Как считаем:</strong> Вес × 36 ÷ (37 − повторения)
-                        </div>
+                        <div class="formula-how"><strong>Формула:</strong> Вес × 36 ÷ (37 − повторения)<br>Считается одной из самых точных для средних повторений (до 10).</div>
                     </div>
-                    
                     <div class="formula-card">
                         <div class="formula-header">
                             <span class="formula-icon">⚡</span>
-                            <span class="formula-name">Эплея (для больших весов)</span>
+                            <span class="formula-name">Формула Эплея</span>
                         </div>
                         <div class="formula-result" id="1rmEpley">-- кг</div>
-                        <div class="formula-desc">Хороша для тяжёлых весов и малого числа повторений (1-5).</div>
-                        <div class="formula-how">
-                            <strong>🧠 Как считаем:</strong> Вес × (1 + повторения ÷ 30)
-                        </div>
+                        <div class="formula-how"><strong>Формула:</strong> Вес × (1 + повторения ÷ 30)<br>Хорошо работает для больших весов и малого количества повторений (2-6).</div>
                     </div>
-                    
                     <div class="formula-card">
                         <div class="formula-header">
                             <span class="formula-icon">🎯</span>
-                            <span class="formula-name">Лэндера (средние веса)</span>
+                            <span class="formula-name">Формула Лэндера</span>
                         </div>
                         <div class="formula-result" id="1rmLander">-- кг</div>
-                        <div class="formula-desc">Даёт хорошие результаты для средних весов и повторений 5-10.</div>
-                        <div class="formula-how">
-                            <strong>🧠 Как считаем:</strong> (100 × вес) ÷ (101,3 − 2,67 × повторения)
-                        </div>
+                        <div class="formula-how"><strong>Формула:</strong> (100 × вес) ÷ (101,3 − 2,67123 × повторения)<br>Рекомендуется для средних весов и повторений от 5 до 15.</div>
                     </div>
-                    
                     <div class="formula-card">
                         <div class="formula-header">
                             <span class="formula-icon">💪</span>
-                            <span class="formula-name">Ломбарди (для взрывных)</span>
+                            <span class="formula-name">Формула Ломбарди</span>
                         </div>
                         <div class="formula-result" id="1rmLombardi">-- кг</div>
-                        <div class="formula-desc">Лучше всего подходит для взрывных упражнений (рывок, толчок).</div>
-                        <div class="formula-how">
-                            <strong>🧠 Как считаем:</strong> Вес × (повторения в степени 0,1)
-                        </div>
+                        <div class="formula-how"><strong>Формула:</strong> Вес × (повторения в степени 0,1)<br>Подходит для взрывных упражнений и малого количества повторений.</div>
                     </div>
                 </div>
                 
                 <div class="total-result">
-                    <div class="label">🏋️ ВАШ 1 ПОВТОРНЫЙ МАКСИМУМ (среднее)</div>
+                    <div class="label">ВАШ 1 ПОВТОРНЫЙ МАКСИМУМ (среднее арифметическое)</div>
                     <div class="value" id="1rmAverage">-- кг</div>
                 </div>
             </div>
 
-            <!-- ==================== КАЛЬКУЛЯТОР ПРОЦЕНТА ЖИРА ==================== -->
+            <!-- ПРОЦЕНТ ЖИРА -->
             <div class="tab-pane" id="tab-fat">
                 <div class="inputs-panel">
-                    <h3>
-                        <span><i class="fas fa-sliders-h"></i> Ваши параметры</span>
-                        <span class="profile-badge"><i class="fas fa-user-check"></i> Данные из профиля</span>
-                    </h3>
+                    <h3><i class="fas fa-sliders-h"></i> Ваши параметры</h3>
                     <div class="inputs-grid">
                         <div class="input-field">
                             <label><i class="fas fa-venus-mars"></i> Пол</label>
@@ -524,15 +473,15 @@
                             <input type="number" id="fatWeight" placeholder="70" value="${weight}">
                         </div>
                         <div class="input-field">
-                            <label><i class="fas fa-ruler"></i> Талия (см)</label>
+                            <label><i class="fas fa-ruler"></i> Обхват талии (см)</label>
                             <input type="number" id="fatWaist" placeholder="80" value="80">
                         </div>
                         <div class="input-field">
-                            <label><i class="fas fa-ruler"></i> Шея (см)</label>
+                            <label><i class="fas fa-ruler"></i> Обхват шеи (см)</label>
                             <input type="number" id="fatNeck" placeholder="38" value="38">
                         </div>
                         <div class="input-field" id="fatHipField" style="${gender === 'female' ? 'block' : 'none'}">
-                            <label><i class="fas fa-ruler"></i> Бёдра (см) — только для женщин</label>
+                            <label><i class="fas fa-ruler"></i> Обхват бёдер (см)</label>
                             <input type="number" id="fatHip" placeholder="90" value="90">
                         </div>
                     </div>
@@ -542,12 +491,15 @@
                     <div class="formula-card">
                         <div class="formula-header">
                             <span class="formula-icon">📏</span>
-                            <span class="formula-name">Метод ВМС США</span>
+                            <span class="formula-name">Процент жира (метод ВМС США)</span>
                         </div>
                         <div class="formula-result" id="fatValue">-- %</div>
-                        <div class="formula-desc" id="fatDesc">Ваш процент жира по измерениям обхватов.</div>
+                        <div class="formula-desc">Оценка процента жира по обхватам тела. Используется методология армии США.</div>
                         <div class="formula-how" id="fatHow">
-                            <strong>🧠 Как считаем:</strong> ${gender === 'male' ? 'У мужчин жир в основном скапливается на животе. Формула сравнивает обхват талии и шеи.' : 'У женщин жир скапливается на бёдрах и ягодицах. Формула складывает талию и бёдра, затем вычитает шею.'}
+                            <strong>Как считаем:</strong><br>
+                            ${gender === 'male' ? 
+                                'Для мужчин: жир в основном откладывается на животе. Формула учитывает разницу между обхватом талии и шеи, а также вес.' : 
+                                'Для женщин: жир откладывается на бёдрах. Формула учитывает сумму обхватов талии и бёдер, вычитает обхват шеи и учитывает вес.'}
                         </div>
                     </div>
                     
@@ -556,20 +508,16 @@
                             <span class="formula-icon">🎯</span>
                             <span class="formula-name">Ваша категория</span>
                         </div>
-                        <div id="fatCategory" style="font-size: 1.2rem; font-weight: 600; margin: 0.5rem 0;"></div>
-                        <div class="formula-desc" id="fatCategoryDesc">Что означает ваш процент жира.</div>
+                        <div id="fatCategory" style="font-size: 1rem; font-weight: 600; margin: 0.5rem 0;"></div>
                         <div class="formula-how" id="fatScale"></div>
                     </div>
                 </div>
             </div>
 
-            <!-- ==================== КАЛЬКУЛЯТОР ИДЕАЛЬНОГО ВЕСА ==================== -->
+            <!-- ИДЕАЛЬНЫЙ ВЕС -->
             <div class="tab-pane" id="tab-ideal">
                 <div class="inputs-panel">
-                    <h3>
-                        <span><i class="fas fa-sliders-h"></i> Ваши параметры</span>
-                        <span class="profile-badge"><i class="fas fa-user-check"></i> Данные из профиля</span>
-                    </h3>
+                    <h3><i class="fas fa-sliders-h"></i> Ваши параметры</h3>
                     <div class="inputs-grid">
                         <div class="input-field">
                             <label><i class="fas fa-venus-mars"></i> Пол</label>
@@ -596,283 +544,86 @@
                             <span class="formula-name">Формула Брока</span>
                         </div>
                         <div class="formula-result" id="idealBrock">-- кг</div>
-                        <div class="formula-desc">Самая старая и простая формула. От роста отнимают 100.</div>
                         <div class="formula-how">
-                            <strong>🧠 Как считаем:</strong> ${height <= 170 ? 'Рост − 100' : 'Рост − 105'} для мужчин, для женщин на 5 кг меньше.<br>
-                            📌 <em>Пример:</em> ${gender === 'male' ? 'мужчина' : 'женщина'} ${height} см → ${height <= 170 ? height - 100 : height - 105} кг
+                            <strong>Формула:</strong><br>
+                            Для мужчин: рост − 100<br>
+                            Для женщин: рост − 105<br>
+                            <em>История:</em> Разработана французским хирургом Полем Броком в XIX веке. Одна из первых формул идеального веса, учитывающая только рост.
                         </div>
                     </div>
-                    
                     <div class="formula-card">
                         <div class="formula-header">
                             <span class="formula-icon">🎯</span>
                             <span class="formula-name">Формула Лоренца</span>
                         </div>
                         <div class="formula-result" id="idealLorenz">-- кг</div>
-                        <div class="formula-desc">Учитывает, что у высоких людей вес растёт не так быстро.</div>
                         <div class="formula-how">
-                            <strong>🧠 Как считаем:</strong> Рост − 100 − (рост − 150) ÷ ${gender === 'male' ? 4 : 2}
+                            <strong>Формула:</strong><br>
+                            рост − 100 − (рост − 150) ÷ 2 (для женщин)<br>
+                            рост − 100 − (рост − 150) ÷ 4 (для мужчин)<br>
+                            <em>Особенность:</em> Более точно учитывает рост, особенно для людей среднего роста (150-180 см).
                         </div>
                     </div>
-                    
                     <div class="formula-card">
                         <div class="formula-header">
                             <span class="formula-icon">💊</span>
                             <span class="formula-name">Формула Девайна</span>
                         </div>
                         <div class="formula-result" id="idealDevine">-- кг</div>
-                        <div class="formula-desc">Придумана врачами для расчёта доз лекарств.</div>
                         <div class="formula-how">
-                            <strong>🧠 Как считаем:</strong> ${gender === 'male' ? '50 + 0,905 × (рост − 152,4)' : '45,5 + 0,905 × (рост − 152,4)'}
+                            <strong>Формула:</strong><br>
+                            Для мужчин: 50 + 0,905 × (рост − 152,4)<br>
+                            Для женщин: 45,5 + 0,905 × (рост − 152,4)<br>
+                            <em>Применение:</em> Изначально разработана для расчёта дозировок лекарств в медицине.
                         </div>
                     </div>
-                    
                     <div class="formula-card">
                         <div class="formula-header">
                             <span class="formula-icon">📊</span>
                             <span class="formula-name">Формула Креффа</span>
                         </div>
                         <div class="formula-result" id="idealCreff">-- кг</div>
-                        <div class="formula-desc">Единственная формула, которая учитывает возраст.</div>
                         <div class="formula-how">
-                            <strong>🧠 Как считаем:</strong> (рост − 100 + возраст ÷ 10) × ${gender === 'male' ? 0.9 : 0.85}
+                            <strong>Формула:</strong><br>
+                            Для мужчин: (рост − 100 + возраст ÷ 10) × 0,9<br>
+                            Для женщин: (рост − 100 + возраст ÷ 10) × 0,85<br>
+                            <em>Особенность:</em> Учитывает возраст, что делает её более точной для людей старше 30 лет.
                         </div>
                     </div>
-                    
                     <div class="formula-card">
                         <div class="formula-header">
                             <span class="formula-icon">⚖️</span>
-                            <span class="formula-name">По индексу Кетле (ИМТ 22)</span>
+                            <span class="formula-name">По ИМТ 22 (золотая середина)</span>
                         </div>
                         <div class="formula-result" id="idealBMI">-- кг</div>
-                        <div class="formula-desc">ИМТ 22 считается идеальным для здоровья сердца.</div>
                         <div class="formula-how">
-                            <strong>🧠 Как считаем:</strong> 22 × (рост в метрах)²<br>
-                            📌 <em>Пример:</em> ${height} см = ${(height/100).toFixed(2)} м → 22 × ${((height/100)**2).toFixed(2)} = <strong>${Math.round(22 * ((height/100)**2))} кг</strong>
+                            <strong>Формула:</strong> 22 × (рост в метрах)²<br>
+                            <em>Почему 22?</em> Индекс массы тела (ИМТ) 22 считается оптимальным с медицинской точки зрения — минимальный риск сердечно-сосудистых заболеваний и диабета.
                         </div>
                     </div>
                 </div>
             </div>
         `;
         
-        // После рендера — привязываем обработчики и запускаем расчёты
-        attachEventListeners();
-        runAllCalculations();
         setupTabs();
-    }
-    
-    function attachEventListeners() {
-        // Вода
-        const waterWeight = document.getElementById('waterWeight');
-        const waterTraining = document.getElementById('waterTraining');
-        const waterHeat = document.getElementById('waterHeat');
-        const waterPregnancy = document.getElementById('waterPregnancy');
-        if (waterWeight) waterWeight.addEventListener('input', calcWater);
-        if (waterTraining) waterTraining.addEventListener('input', calcWater);
-        if (waterHeat) waterHeat.addEventListener('change', calcWater);
-        if (waterPregnancy) waterPregnancy.addEventListener('change', calcWater);
-        
-        // 1 ПМ
-        const rmWeight = document.getElementById('1rmWeight');
-        const rmReps = document.getElementById('1rmReps');
-        if (rmWeight) rmWeight.addEventListener('input', calc1RM);
-        if (rmReps) rmReps.addEventListener('input', calc1RM);
-        
-        // Процент жира
-        const fatGender = document.getElementById('fatGender');
-        const fatWeight = document.getElementById('fatWeight');
-        const fatWaist = document.getElementById('fatWaist');
-        const fatNeck = document.getElementById('fatNeck');
-        const fatHip = document.getElementById('fatHip');
-        if (fatGender) fatGender.addEventListener('change', () => { toggleHipField(); calcFat(); });
-        if (fatWeight) fatWeight.addEventListener('input', calcFat);
-        if (fatWaist) fatWaist.addEventListener('input', calcFat);
-        if (fatNeck) fatNeck.addEventListener('input', calcFat);
-        if (fatHip) fatHip.addEventListener('input', calcFat);
-        
-        // Идеальный вес
-        const idealGender = document.getElementById('idealGender');
-        const idealHeight = document.getElementById('idealHeight');
-        const idealAge = document.getElementById('idealAge');
-        if (idealGender) idealGender.addEventListener('change', calcIdeal);
-        if (idealHeight) idealHeight.addEventListener('input', calcIdeal);
-        if (idealAge) idealAge.addEventListener('input', calcIdeal);
+        initCalculators();
     }
     
     function setupTabs() {
-        document.querySelectorAll('.tab-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-                document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+        const tabs = document.querySelectorAll('.tab-btn');
+        tabs.forEach(btn => {
+            btn.addEventListener('click', function() {
+                tabs.forEach(b => b.classList.remove('active'));
+                const panes = document.querySelectorAll('.tab-pane');
+                panes.forEach(p => p.classList.remove('active'));
                 btn.classList.add('active');
-                document.getElementById(`tab-${btn.dataset.tab}`).classList.add('active');
+                const tabId = btn.getAttribute('data-tab');
+                document.getElementById('tab-' + tabId).classList.add('active');
             });
         });
     }
     
-    function runAllCalculations() {
-        calcWater();
-        calc1RM();
-        calcFat();
-        calcIdeal();
-    }
-    
-    // ==================== ВОДА ====================
-    function calcWater() {
-        let weight = parseFloat(document.getElementById('waterWeight')?.value);
-        let training = parseFloat(document.getElementById('waterTraining')?.value);
-        let heat = parseFloat(document.getElementById('waterHeat')?.value);
-        let pregnancy = parseFloat(document.getElementById('waterPregnancy')?.value);
-        
-        if (isNaN(weight) || weight <= 0) {
-            if (document.getElementById('waterBase')) document.getElementById('waterBase').innerHTML = '❌';
-            if (document.getElementById('waterTotal')) document.getElementById('waterTotal').innerHTML = '❌';
-            return;
-        }
-        
-        let base = weight * 0.035;
-        let trainingWater = (training / 60) * 0.75;
-        let extra = heat + pregnancy;
-        let total = base + trainingWater + extra;
-        
-        if (document.getElementById('waterBase')) document.getElementById('waterBase').innerHTML = base.toFixed(1) + ' л';
-        if (document.getElementById('waterTrainingResult')) document.getElementById('waterTrainingResult').innerHTML = trainingWater.toFixed(1) + ' л';
-        if (document.getElementById('waterExtra')) document.getElementById('waterExtra').innerHTML = extra.toFixed(1) + ' л';
-        if (document.getElementById('waterTotal')) document.getElementById('waterTotal').innerHTML = total.toFixed(1) + ' л';
-    }
-    
-    // ==================== 1 ПМ ====================
-    function calc1RM() {
-        let weight = parseFloat(document.getElementById('1rmWeight')?.value);
-        let reps = parseFloat(document.getElementById('1rmReps')?.value);
-        
-        if (isNaN(weight) || weight <= 0 || isNaN(reps) || reps < 1 || reps >= 37) {
-            if (document.getElementById('1rmAverage')) document.getElementById('1rmAverage').innerHTML = '❌';
-            return;
-        }
-        
-        let brzycki = weight * (36 / (37 - reps));
-        let epley = weight * (1 + reps / 30);
-        let lander = (100 * weight) / (101.3 - 2.67123 * reps);
-        let lombardi = weight * Math.pow(reps, 0.1);
-        let avg = (brzycki + epley + lander + lombardi) / 4;
-        
-        if (document.getElementById('1rmBrzycki')) document.getElementById('1rmBrzycki').innerHTML = Math.round(brzycki) + ' кг';
-        if (document.getElementById('1rmEpley')) document.getElementById('1rmEpley').innerHTML = Math.round(epley) + ' кг';
-        if (document.getElementById('1rmLander')) document.getElementById('1rmLander').innerHTML = Math.round(lander) + ' кг';
-        if (document.getElementById('1rmLombardi')) document.getElementById('1rmLombardi').innerHTML = Math.round(lombardi) + ' кг';
-        if (document.getElementById('1rmAverage')) document.getElementById('1rmAverage').innerHTML = Math.round(avg) + ' кг';
-    }
-    
-    // ==================== ПРОЦЕНТ ЖИРА ====================
-    function toggleHipField() {
-        const gender = document.getElementById('fatGender')?.value;
-        const hipField = document.getElementById('fatHipField');
-        if (hipField) hipField.style.display = gender === 'female' ? 'block' : 'none';
-    }
-    
-    function calcFat() {
-        let gender = document.getElementById('fatGender')?.value;
-        let weight = parseFloat(document.getElementById('fatWeight')?.value);
-        let waist = parseFloat(document.getElementById('fatWaist')?.value);
-        let neck = parseFloat(document.getElementById('fatNeck')?.value);
-        let hip = parseFloat(document.getElementById('fatHip')?.value);
-        
-        if (isNaN(weight) || isNaN(waist) || isNaN(neck) || weight <= 0 || waist <= 0 || neck <= 0) {
-            if (document.getElementById('fatValue')) document.getElementById('fatValue').innerHTML = '❌';
-            return;
-        }
-        
-        let fatPercent;
-        if (gender === 'male') {
-            fatPercent = 86.010 * Math.log10(waist - neck) - 70.041 * Math.log10(weight) + 36.76;
-            if (document.getElementById('fatHow')) {
-                document.getElementById('fatHow').innerHTML = `<strong>🧠 Как считаем:</strong> У мужчин жир в основном скапливается на животе. Формула сравнивает обхват талии и шеи — чем больше разница, тем выше процент жира.`;
-            }
-        } else {
-            if (isNaN(hip) || hip <= 0) {
-                if (document.getElementById('fatValue')) document.getElementById('fatValue').innerHTML = '❌';
-                return;
-            }
-            fatPercent = 163.205 * Math.log10(waist + hip - neck) - 97.684 * Math.log10(weight) - 78.387;
-            if (document.getElementById('fatHow')) {
-                document.getElementById('fatHow').innerHTML = `<strong>🧠 Как считаем:</strong> У женщин жир скапливается на бёдрах и ягодицах. Формула складывает талию и бёдра, затем вычитает шею — так мы учитываем женскую физиологию.`;
-            }
-        }
-        
-        fatPercent = Math.round(fatPercent * 10) / 10;
-        if (document.getElementById('fatValue')) document.getElementById('fatValue').innerHTML = fatPercent + ' %';
-        
-        let category = '', categoryClass = '';
-        if (gender === 'male') {
-            if (fatPercent < 6) { category = 'Соревновательная форма'; categoryClass = 'essential'; }
-            else if (fatPercent < 14) { category = 'Спортивная форма'; categoryClass = 'athlete'; }
-            else if (fatPercent < 18) { category = 'Фитнес-форма'; categoryClass = 'fitness'; }
-            else if (fatPercent < 25) { category = 'Приемлемый уровень'; categoryClass = 'acceptable'; }
-            else { category = 'Избыточный жир'; categoryClass = 'obese'; }
-        } else {
-            if (fatPercent < 14) { category = 'Соревновательная форма'; categoryClass = 'essential'; }
-            else if (fatPercent < 21) { category = 'Спортивная форма'; categoryClass = 'athlete'; }
-            else if (fatPercent < 25) { category = 'Фитнес-форма'; categoryClass = 'fitness'; }
-            else if (fatPercent < 32) { category = 'Приемлемый уровень'; categoryClass = 'acceptable'; }
-            else { category = 'Избыточный жир'; categoryClass = 'obese'; }
-        }
-        
-        if (document.getElementById('fatCategory')) {
-            document.getElementById('fatCategory').innerHTML = `<span class="fat-level ${categoryClass}" style="font-size: 0.9rem; padding: 0.3rem 1rem;">${category}</span>`;
-        }
-        
-        if (document.getElementById('fatScale')) {
-            document.getElementById('fatScale').innerHTML = `
-                <strong>Шкала для ${gender === 'male' ? 'мужчин' : 'женщин'}:</strong><br><br>
-                <span class="fat-level essential">${gender === 'male' ? '<6%' : '<14%'}</span> → Очень мало<br>
-                <span class="fat-level athlete">${gender === 'male' ? '6-14%' : '14-21%'}</span> → Спортсмен<br>
-                <span class="fat-level fitness">${gender === 'male' ? '14-18%' : '21-25%'}</span> → Фитнес<br>
-                <span class="fat-level acceptable">${gender === 'male' ? '18-25%' : '25-32%'}</span> → Приемлемо<br>
-                <span class="fat-level obese">${gender === 'male' ? '>25%' : '>32%'}</span> → Выше нормы
-            `;
-        }
-    }
-    
-    // ==================== ИДЕАЛЬНЫЙ ВЕС ====================
-    function calcIdeal() {
-        let gender = document.getElementById('idealGender')?.value;
-        let height = parseFloat(document.getElementById('idealHeight')?.value);
-        let age = parseFloat(document.getElementById('idealAge')?.value);
-        
-        if (isNaN(height) || height <= 0) {
-            return;
-        }
-        
-        let brock;
-        if (height <= 170) brock = height - 100 - (gender === 'male' ? 0 : 5);
-        else brock = height - 100 - (gender === 'male' ? 5 : 10);
-        
-        let lorenz = height - 100 - (height - 150) / (gender === 'male' ? 4 : 2);
-        
-        let devine;
-        if (gender === 'male') devine = 50 + 0.905 * (height - 152.4);
-        else devine = 45.5 + 0.905 * (height - 152.4);
-        
-        let creff;
-        if (gender === 'male') creff = (height - 100 + age / 10) * 0.9;
-        else creff = (height - 100 + age / 10) * 0.85;
-        
-        let bmiIdeal = 22 * Math.pow(height / 100, 2);
-        
-        if (document.getElementById('idealBrock')) document.getElementById('idealBrock').innerHTML = Math.round(brock) + ' кг';
-        if (document.getElementById('idealLorenz')) document.getElementById('idealLorenz').innerHTML = Math.round(lorenz) + ' кг';
-        if (document.getElementById('idealDevine')) document.getElementById('idealDevine').innerHTML = Math.round(devine) + ' кг';
-        if (document.getElementById('idealCreff')) document.getElementById('idealCreff').innerHTML = Math.round(creff) + ' кг';
-        if (document.getElementById('idealBMI')) document.getElementById('idealBMI').innerHTML = Math.round(bmiIdeal) + ' кг';
-    }
-    
-    // Запускаем загрузку
     loadUserProfile();
 </script>
-
-<script src="theme-switcher.js"></script>
-<script src="load-header.js"></script>
-<script src="load-footer.js"></script>
 </body>
 </html>

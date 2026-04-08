@@ -6,6 +6,69 @@
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="icon" type="image/png" href="https://bowbokskvpwlpkggswao.supabase.co/storage/v1/object/public/image/favico.png">
+    <style>
+        /* Дополнительные стили для одинаковой высоты карточек */
+        .goals-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+        .goal-card-link {
+            text-decoration: none;
+            display: block;
+            height: 100%;
+        }
+        .goal-card {
+            background: var(--card-bg, #ffffff);
+            border-radius: 20px;
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.02);
+            border: 1px solid var(--border-color, #e2e8f0);
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        body[data-theme="dark"] .goal-card {
+            background: #1e1e2e;
+            border-color: #2a2a3e;
+        }
+        .goal-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(42, 125, 225, 0.1);
+            border-color: #2a7de1;
+        }
+        body[data-theme="dark"] .goal-card:hover {
+            border-color: #6c5ce7;
+            box-shadow: 0 15px 35px rgba(108, 92, 231, 0.2);
+        }
+        .goal-icon {
+            font-size: 2.5rem;
+            color: #2a7de1;
+            margin-bottom: 1rem;
+        }
+        body[data-theme="dark"] .goal-icon {
+            color: #8b7ef0;
+        }
+        .goal-card h3 {
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+            color: #1e293b;
+        }
+        body[data-theme="dark"] .goal-card h3 {
+            color: #e2e8f0;
+        }
+        .goal-card p {
+            color: #475569;
+            font-size: 0.9rem;
+        }
+        body[data-theme="dark"] .goal-card p {
+            color: #94a3b8;
+        }
+    </style>
 </head>
 <body>
 

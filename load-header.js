@@ -44,7 +44,7 @@ function setupNavigation() {
         'gyms.html': 'navGyms',
         'supplements.html': 'navSupplements',
         'dashboard.html': 'navSupplements',
-        'marathon-detail.html': 'navMarathons'
+        'marathon-detail.html': 'navMarathons',
     };
     
     const currentNavId = pageMapping[currentPage];
