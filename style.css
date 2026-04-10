@@ -1992,3 +1992,89 @@ select option {
         -webkit-overflow-scrolling: touch;
     }
 }
+/* ===== РЕКОМЕНДАЦИЯ МАРАФОНА ===== */
+.recommendation-card {
+    background: linear-gradient(135deg, #2a7de1, #6b4eff);
+    border-radius: 20px;
+    padding: 1.5rem;
+    margin-top: 1.5rem;
+    color: white;
+    position: relative;
+    overflow: hidden;
+}
+.recommendation-card::before {
+    content: "🎯";
+    position: absolute;
+    right: -10px;
+    top: -10px;
+    font-size: 80px;
+    opacity: 0.12;
+    transform: rotate(15deg);
+    pointer-events: none;
+}
+.recommendation-icon {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+}
+.recommendation-title {
+    font-size: 0.85rem;
+    font-weight: 500;
+    opacity: 0.85;
+    margin-bottom: 0.25rem;
+    letter-spacing: 0.5px;
+}
+.recommendation-name {
+    font-size: 1.3rem;
+    font-weight: 800;
+    margin-bottom: 0.5rem;
+    letter-spacing: -0.5px;
+}
+.recommendation-desc {
+    font-size: 0.8rem;
+    opacity: 0.9;
+    margin-bottom: 1rem;
+    line-height: 1.4;
+}
+.recommendation-badge {
+    display: inline-block;
+    background: rgba(255,255,255,0.2);
+    padding: 0.3rem 0.8rem;
+    border-radius: 40px;
+    font-size: 0.7rem;
+    margin-right: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+.recommendation-btn {
+    background: white;
+    color: #2a7de1;
+    border: none;
+    padding: 0.6rem 1.2rem;
+    border-radius: 40px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    margin-top: 0.5rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+.recommendation-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+.alternatives {
+    margin-top: 1rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid rgba(255,255,255,0.2);
+    font-size: 0.7rem;
+    opacity: 0.8;
+}
+.alternatives span {
+    cursor: pointer;
+    text-decoration: underline;
+    margin: 0 0.25rem;
+}
+.alternatives span:hover {
+    opacity: 1;
+}
